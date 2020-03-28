@@ -28,6 +28,16 @@ def abbrevSentence(sentence):
 def abbrevWord(word):
 	return word[0]
 
+'''
+name1 = 'Drake'
+name2 = 'Dracke'
+dmeta = fuzzy.DMetaphone()
+print(dmeta(name1))
+print(dmeta(name2))
+print(fuzzy.nysiis(name1))
+print(fuzzy.nysiis(name2))
+'''
+
 states = {
         'ak': 'alaska',
         'al': 'alabama',
