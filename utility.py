@@ -1,6 +1,31 @@
 #code our own algorithm or use libraries?
 import fuzzy 
 import Levenshtein
+import collections
+import string
+
+def compareSentenceBySwap(sentence1, sentence2, separationValue):
+	tokens1 = sentence1.split(separationValue)
+	tokens2 = sentence2.split(separationValue)
+	# returns true if the sentences have the same values in swapped order
+	return collections.Counter(tokens1) == collections.Counter(tokens2)
+
+def compareFirstLastSwap(first1, last1, first2, last2):
+	# returns true if the first and last names are swapped
+	return (first1 == last2) and (last1 == first2)
+
+def compareWordsWithoutSpecialChars(word1, word2):
+	remove = string.punctuation + string.whitespace
+    return word1.translate(None, remove) == word2.translate(None, remove)
+
+def abbrevSentence(sentence):
+	result = ''
+	for word in sentence:
+		result += abbrevWord(word)
+	return result
+
+def abbrevWord(word):
+	return word[0]
 
 '''
 name1 = 'Drake'
