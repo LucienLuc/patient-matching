@@ -2,7 +2,7 @@
 
 '''
 STRINGS
-Soundex
+Soundex vs metaphone
 Levenstein distance
 Abrevations for States
 
@@ -11,7 +11,7 @@ Account Number: check for name in account number (feel like this is useless)
 Names: abreviations, common shorter versions, soundex, levenstein, make all lowercase when checking
         common longer versions (also try to deal with anne-marie vs anne), common other spellings, keyboard distance typos, characters that look similiar
         switch first/last, special characters (T-J vs T.J vs TJ)
-Date of Birth: Levenstein, swapping month/day/year
+Date of Birth: Levenstein, swapping month/day/year, spelled out date?
 Sex: abbreviations
 Streets: possibly swapping of words, (do everything as names but for multiple words)
 Zip: Levenstein
