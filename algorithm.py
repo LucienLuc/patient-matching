@@ -43,7 +43,9 @@ def calculateSexConfidence(sex1, sex2):
     confidence = 1/(pow(distance+1, distance))
     return confidence
 
-def calculateStreetConfidence(street11, street12):
+def calculateStreetConfidence(street1, street2):
+    street1 = street1.split(' ')
+    street2 = street2.split(' ')
     return 0
 
 def calculateCityConfidence(city1, city2):

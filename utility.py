@@ -149,6 +149,31 @@ sex = {
         'u': 'unknown'
 }
 
+streets = { 
+    'aly' : 'Alley',
+    'ave' : 'Avenue',
+    'blv' : 'Boulevard',
+    'blvd' : 'Boulevard',
+    'cir' : 'Circle',
+    'ct' : 'Court',
+    'cv' : 'Cove',
+    'cyn' : 'Canyon',
+    'dr' : 'Drive',
+    'expy' : 'Expressway',
+    'hwy' : 'Highway',
+    'ln' : 'Lane',
+    'pkwy' : 'Parkway',
+    'pl' : 'Place',
+    'pt' : 'Point',
+    'rd' : 'Road',
+    'sq' : 'Square',
+    'st' : 'Street',
+    'ter' : 'Terrace',
+    'tr' : 'Trail',
+    'trl' : 'Trail',
+    'wy' : 'Way'
+    }
+
 #Compares two patients and returns confidence that they are the same person
 #@param data1 array of a row of patient data 
 #@param data2 array of a row of patient data
