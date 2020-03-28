@@ -9,16 +9,6 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
 
 def calculateNameConfidence(first1, last1, first2, last2):
     utility.compareFirstLastSwap()
-<<<<<<< HEAD
-    calculateFirstNameConfidence()
-    calculateLastNameConfidence()
-    return 0
-def calculateFirstNameConfidence(first1, first2):
-    return 0
-
-def calculateLastNameConfidence(last1, last2):
-    return 0
-=======
     calculateNameConfidence()
     calculateNameConfidence()
     
@@ -33,7 +23,6 @@ def calculateNameConfidence(name1, name2):
     utility.compareByVisuallySimilarChars()
 
     # keyboard distance
->>>>>>> 152d306fd1efde271c74fc4b226b73c23cb70719
 
 def calculateMiddleIConfidence(middle1, middle2):
     return 0
@@ -54,21 +43,27 @@ def calculateSexConfidence(sex1, sex2):
     confidence = 1/(pow(distance+1, distance))
     return confidence
 
-def calculateStreet1Confidence(street11, street12):
-    return 0
-
-def calculateStreet2Confidence(street21, middle22):
+def calculateStreetConfidence(street11, street12):
     return 0
 
 def calculateCityConfidence(city1, city2):
+
+    #calculate two fully spelled out cities
     distance = utility.levenshtein(city1, city2)
     dmeta1 = utility.doubleMetaphone(city1)
     dmeta2 = utility.doubleMetaphone(city2)
-
     distance = utility.levenshtein(dmeta1[0],dmeta2[0])
-    
 
-    confidence = 1/(pow(distance+1, distance+1))
+    #calculate abbreviations
+    abbreviationScore = 0
+    shortenedScore = 0
+    if utility.compareByAbbrevSentence(city1, city2):
+        abbreviationScore = (min(len(city1),len(city2)))/5
+    #calculate shortened versions (if abbreviated skip)
+    elif utility.compareByContains(city1,city2):
+        shortenedScore = (min(len(city1),len(city2)))/max(len(city1),len(city2))
+
+    confidence = min(1/(pow(distance+1, distance)) + abbreviationScore + shortenedScore, 1)
     return confidence
 
 #typos on abbreviations really screw this up   
@@ -105,16 +100,16 @@ def getConfidenceScore(row1, row2):
     CMI = calculateMiddleIConfidence(row1[4], row2[4])
     DOB = calculateDOBConfidence(row1[6], row2[6])
     S = calculateSexConfidence(row1[7], row2[7])
-    CS1 = calculateStreet1Confidence(row1[8], row2[8])
-    CS2 = calculateStreet2Confidence(row1[9], row2[9])
+    CS1 = calculateStreetConfidence(row1[8], row2[8])
+    CS2 = calculateStreetConfidence(row1[9], row2[9])
     CC = calculateCityConfidence(row1[10], row2[10])
     CS = calculateStateConfidence(row1[11], row2[11])
     CZ = calculateZipConfidence(row1[12], row2[12])
 
     PN = calculateNameConfidence(row1[13], row1[15], row2[13], row2[15])
     PMI = calculateMiddleIConfidence(row1[14], row2[14])
-    PS1 = calculateStreet1Confidence(row1[16], row2[16])
-    PS2 = calculateStreet2Confidence(row1[17], row2[17])
+    PS1 = calculateStreetConfidence(row1[16], row2[16])
+    PS2 = calculateStreetConfidence(row1[17], row2[17])
     PC = calculateCityConfidence(row1[18], row2[18])
     PS = calculateStateConfidence(row1[19], row2[19])
     PZ = calculateZipConfidence(row1[20], row2[20])

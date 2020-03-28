@@ -26,7 +26,7 @@ def compareNameByNickname(name1, name2):
 	return False
 
 def compareByContains(word1, word2):
-	return word1 in word2 or word2 in word1:
+	return word1 in word2 or word2 in word1
 
 def compareSentenceBySwap(sentence1, sentence2, separationValue):
 	tokens1 = sentence1.split(separationValue)
@@ -51,9 +51,9 @@ def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
 
 def compareByCommonMisspells(name1, name2):
-
+        return 0
 def compareByVisuallySimilarChars(word1, word2):
-
+        return 0
 
 def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
