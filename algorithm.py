@@ -1,5 +1,7 @@
 import csv
+
 import utility
+import dictionaries
 #import database
 
 #assume all strings all lower
@@ -32,11 +34,11 @@ def calculateDOBConfidence(DOB1, DOB2):
 
 def calculateSexConfidence(sex1, sex2):
     try:
-        sex1 = utility.sex[sex1]
+        sex1 = dictionaries.sex[sex1]
     except KeyError:
         pass
     try:
-        sex2 = utility.sex[sex2]
+        sex2 = dictionaries.sex[sex2]
     except KeyError:
         pass
     distance = utility.levenshtein(sex1, sex2)
@@ -46,6 +48,8 @@ def calculateSexConfidence(sex1, sex2):
 def calculateStreetConfidence(street1, street2):
     street1 = street1.split(' ')
     street2 = street2.split(' ')
+    try:
+        street1[-1] = utility.streets
     return 0
 
 def calculateCityConfidence(city1, city2):
@@ -72,11 +76,11 @@ def calculateCityConfidence(city1, city2):
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
     try: 
-        state1 = utility.states[state1]
+        state1 = dictionaries.states[state1]
     except KeyError:
         pass
     try:
-        state2 = utility.states[state2]
+        state2 = dictionaries.states[state2]
     except KeyError:
         pass
     distance = utility.levenshtein(state1, state2)
