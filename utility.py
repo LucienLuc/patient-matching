@@ -16,6 +16,7 @@ def compareFirstLastSwap(first1, last1, first2, last2):
 
 def compareWordsWithoutSpecialChars(word1, word2):
 	remove = string.punctuation + string.whitespace
+	# returns true if the words are the same without punctuation and whitespace
     return word1.translate(None, remove) == word2.translate(None, remove)
 
 def abbrevSentence(sentence):
