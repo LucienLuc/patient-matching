@@ -1,28 +1,6 @@
 import csv
 import utility
 
-#dictreader object
-data = csv.DictReader(open('Patient Matching Data.csv'))
-
-data_array = []
-for row in data:
-    data_array.append([row])
-#print(data_array)
-sort = []
-for i in range(len(data_array)):
-    index = 0
-    for j in range(len(data_array)):
-        if i == j:
-            continue
-        max = 0
-        cs = utility.get_confidence_score(data_array[i], data_array[j])
-        if cs > max:
-            max = cs
-            index = j
-    data_array[i].append(data_array[j])
-    del data_array[j]
-        
-exit()
 '''
 STRINGS
 Soundex vs metaphone
