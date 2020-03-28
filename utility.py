@@ -67,9 +67,9 @@ def abbrevSentence(sentence):
 def abbrevWord(word):
 	return word[0]
 
-def doubleMetaphone(word):
+def compareDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone()
-        return dmeta(word)
+        return dmeta(word1[0]) == dmeta(word2[0]) or dmeta(word1[1]) == dmeta(word2[1])
 
 def levenshtein(string1, string2):
     return Levenshtein.distance(string1,string2)

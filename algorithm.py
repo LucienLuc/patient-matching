@@ -49,16 +49,26 @@ def calculateStreetConfidence(street1, street2):
     street1 = street1.split(' ')
     street2 = street2.split(' ')
     try:
-        street1[-1] = utility.streets
+        street1[-1] = dictionaries.streets[street1[-1]]
+    except KeyError:
+        pass
+    try: 
+         street2[-1] = dictionaries.streets[street2[-1]]
+    except KeyError:
+        pass
+    
     return 0
 
 def calculateCityConfidence(city1, city2):
 
     #calculate two fully spelled out cities
+    #levenshtein
     distance = utility.levenshtein(city1, city2)
-    dmeta1 = utility.doubleMetaphone(city1)
-    dmeta2 = utility.doubleMetaphone(city2)
-    distance = utility.levenshtein(dmeta1[0],dmeta2[0])
+
+    dmetascore = 0
+    #double metaphone
+    if utility.compareDoubleMetaphone(city1, city2):
+        dmetascore = 0.8
 
     #calculate abbreviations
     abbreviationScore = 0
@@ -69,9 +79,9 @@ def calculateCityConfidence(city1, city2):
     elif utility.compareByContains(city1,city2):
         shortenedScore = (min(len(city1),len(city2)))/max(len(city1),len(city2))
 
-    confidence = min(1/(pow(distance+1, distance)) + abbreviationScore + shortenedScore, 1)
+    confidence = min(1/(pow(distance+1, distance+1)) + abbreviationScore + shortenedScore, 1)
     return confidence
-
+calculateCityConfidence("George", "Sarah")
 #typos on abbreviations really screw this up   
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
