@@ -1,28 +1,80 @@
 import csv
 import utility
-
+import database
 #dictreader object
-data = csv.DictReader(open('Patient Matching Data.csv'))
 
-data_array = []
-for row in data:
-    data_array.append([row])
-#print(data_array)
-sort = []
-for i in range(len(data_array)):
-    index = 0
-    for j in range(len(data_array)):
-        if i == j:
-            continue
-        max = 0
-        cs = utility.get_confidence_score(data_array[i], data_array[j])
-        if cs > max:
-            max = cs
-            index = j
-    data_array[i].append(data_array[j])
-    del data_array[j]
-        
-exit()
+
+def calculatePatientIDConfidence(patientID1, patientID2):
+
+def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
+    
+def calculateNameConfidence(first1, last1, first2, last2):
+    
+def calculateFirstNameConfidence(first1, first2):
+
+def calculateLastNameConfidence(last1, last2):
+    
+def calculateMiddleIConfidence(middle1, middle2):
+    
+def calculateDOBConfidence(DOB1, DOB2):
+    
+def calculateSexIConfidence(sex1, sex2):
+    
+def calculateStreet1IConfidence(street11, street12):
+    
+def calculateStreet2Confidence(street21, middle22):
+    
+def calculateCityConfidence(city1, city2):
+    
+def calculateStateConfidence(state1, state2):
+    
+def calculateZipIConfidence(zip1, zip2):
+    
+
+
+def getConfidenceScore(row1, row2):
+    
+    patientID
+    patientAcct#
+    firstName
+    middleI
+    lastName
+    dateOfBirth
+    sex
+    currentStreet1
+    currentStreet2
+    currentCity
+    currentState
+    currentZipCode
+    previousfirstName
+    previousmiddleI
+    previouslastName
+    previousStreet1
+    previousStreet2
+    previousCity
+    previousState
+    previousZipCode
+
+
+
+
+def groupByConfidenceScore(data, confidenceThreshold):
+    alreadyAddedList = []
+    result = []
+    for row1 in data:
+        group = [row1]
+        alreadyAddedList.append(row1)
+        for row2 in data:
+            if row2 not in alreadyAddedList:
+                if getConfidenceScore(row1, row2) >= confidenceThreshold:
+                    group.append(row2)
+        result.add(group)
+    # return an array of groups
+    return result
+
+
+
+
 '''
 STRINGS
 Soundex vs metaphone
@@ -38,7 +90,7 @@ Date of Birth: Levenstein, swapping month/day/year, spelled out date?
 Sex: abbreviations
 Streets: possibly swapping of words, (do everything as names but for multiple words)
 Zip: Levenstein
-States: (same as names)
+States: (same as names) - almost
 
 General Notes:
 lonber the word/input = more weight in confidence (because more chance to get it right)
