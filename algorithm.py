@@ -2,46 +2,59 @@ import csv
 import utility
 #import database
 
-print(utility.doubleMetaphone('2341', '2341'))
-print(utility.states['ca'])
-try:
-    print(utility.states['aa'])
-except KeyError:
-    print("No Key")
-exit()
-
 #assume all strings all lower
 
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
-    
+    return 0
+
 def calculateNameConfidence(first1, last1, first2, last2):
     utility.compareFirstLastSwap()
     calculateFirstNameConfidence()
     calculateLastNameConfidence()
-    
+    return 0
 def calculateFirstNameConfidence(first1, first2):
-
+    return 0
 
 def calculateLastNameConfidence(last1, last2):
-    
+    return 0
 
 def calculateMiddleIConfidence(middle1, middle2):
-    
+    return 0
 
 def calculateDOBConfidence(DOB1, DOB2):
-    
+    return 0
 
 def calculateSexConfidence(sex1, sex2):
-    
-    
+    try:
+        sex1 = utility.sex[sex1]
+    except KeyError:
+        pass
+    try:
+        sex2 = utility.sex[sex2]
+    except KeyError:
+        pass
+    distance = utility.levenshtein(sex1, sex2)
+    confidence = 1/(pow(distance+1, distance))
+    return confidence
+
 def calculateStreet1Confidence(street11, street12):
-    
+    return 0
+
 def calculateStreet2Confidence(street21, middle22):
-    
+    return 0
+
 def calculateCityConfidence(city1, city2):
+    distance = utility.levenshtein(city1, city2)
+    dmeta1 = utility.doubleMetaphone(city1)
+    dmeta2 = utility.doubleMetaphone(city2)
+
+    distance = utility.levenshtein(dmeta1[0],dmeta2[0])
     
 
-#typos on abbreviations really screw this up
+    confidence = 1/(pow(distance+1, distance+1))
+    return confidence
+
+#typos on abbreviations really screw this up   
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
     try: 
@@ -52,20 +65,19 @@ def calculateStateConfidence(state1, state2):
         state2 = utility.states[state2]
     except KeyError:
         pass
-    distance = utility.levenshtein(state1,state2)
+    distance = utility.levenshtein(state1, state2)
     confidence = 1/(distance+1)
     return confidence
 
-def calculateZipIConfidence(zip1, zip2):
-    distance = utility.levenshtein(zip1,zip2) 
+def calculateZipConfidence(zip1, zip2):
+    distance = utility.levenshtein(zip1, zip2) 
     # distance -> confidence
     #0 -> 1
     #1 -> 0.5
     #2 -> 0.11
     #3 -> .0156
-    confidence = 1/(pow(distance+1,distance))
+    confidence = 1/(pow(distance+1, distance))
     return confidence
-
 
 def getConfidenceScore(row1, row2):
     row1 = [x.lower() for x in row1]
@@ -90,8 +102,7 @@ def getConfidenceScore(row1, row2):
     PS = calculateStateConfidence(row1[19], row2[19])
     PZ = calculateZipConfidence(row1[20], row2[20])
 
-    return PAN + CN + CMI + DOB + S + CS1 + CS2 + CC + CS + CZ +
-    PN + PMI + PS1 + PS2 + PC + PS + PZ
+    return PAN + CN + CMI + DOB + S + CS1 + CS2 + CC + CS + CZ + PN + PMI + PS1 + PS2 + PC + PS + PZ
 
 
 

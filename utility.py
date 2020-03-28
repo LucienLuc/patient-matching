@@ -53,9 +53,9 @@ def abbrevSentence(sentence):
 def abbrevWord(word):
 	return word[0]
 
-def doubleMetaphone(word1, word2):
+def doubleMetaphone(word):
         dmeta = fuzzy.DMetaphone()
-        return dmeta(word1), dmeta(word2)
+        return dmeta(word)
 
 def levenshtein(string1, string2):
         return Levenshtein.distance(string1,string2)
@@ -129,7 +129,11 @@ states = {
         'wv': 'west virginia',
         'wy': 'wyoming'
 }
-
+sex = {
+        'm': 'male',
+        'f': 'female',
+        'u': 'unknown'
+}
 
 #Compares two patients and returns confidence that they are the same person
 #@param data1 array of a row of patient data 
