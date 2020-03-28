@@ -36,10 +36,6 @@ def compareFirstLastSwap(first1, last1, first2, last2):
 	return (first1 == last2) and (last1 == first2)
 
 def compareWordsWithoutSpecialChars(word1, word2):
-<<<<<<< HEAD
-        remove = string.punctuation + string.whitespace
-        return word1.translate(None, remove) == word2.translate(None, remove)
-=======
 	# returns true if the words are the same without punctuation and whitespace
     return removeSpecialCharsFromWord(word1) == removeSpecialCharsFromWord(word2)
 
@@ -47,7 +43,6 @@ def removeSpecialCharsFromWord(word):
 	remove = string.punctuation + string.whitespace
 	# returns word without punctuation and whitespace
 	return word.translate(None, remove)
->>>>>>> e9b53caab958d49e99f7b45ee85a965f32744726
 
 def abbrevSentence(sentence):
 	result = ''
@@ -57,6 +52,13 @@ def abbrevSentence(sentence):
 
 def abbrevWord(word):
 	return word[0]
+
+def doubleMetaphone(word1, word2):
+        dmeta = fuzzy.DMetaphone()
+        return dmeta(word1), dmeta(word2)
+
+def levenshtein(string1, string2):
+        return Levenshtein.distance(string1,string2)
 
 '''
 name1 = 'Drake'
