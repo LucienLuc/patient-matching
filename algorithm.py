@@ -4,23 +4,29 @@ import database
 #dictreader object
 
 
-def calculatePatientIDConfidence(patientID1, patientID2):
-
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     
 def calculateNameConfidence(first1, last1, first2, last2):
+    utility.compareFirstLastSwap()
+    calculateFirstNameConfidence()
+    calculateLastNameConfidence()
     
 def calculateFirstNameConfidence(first1, first2):
 
+
 def calculateLastNameConfidence(last1, last2):
     
+
 def calculateMiddleIConfidence(middle1, middle2):
     
+
 def calculateDOBConfidence(DOB1, DOB2):
     
-def calculateSexIConfidence(sex1, sex2):
+
+def calculateSexConfidence(sex1, sex2):
     
-def calculateStreet1IConfidence(street11, street12):
+    
+def calculateStreet1Confidence(street11, street12):
     
 def calculateStreet2Confidence(street21, middle22):
     
@@ -28,33 +34,35 @@ def calculateCityConfidence(city1, city2):
     
 def calculateStateConfidence(state1, state2):
     
-def calculateZipIConfidence(zip1, zip2):
+def calculateZipConfidence(zip1, zip2):
     
 
 
 def getConfidenceScore(row1, row2):
-    
-    patientID
-    patientAcct#
-    firstName
-    middleI
-    lastName
-    dateOfBirth
-    sex
-    currentStreet1
-    currentStreet2
-    currentCity
-    currentState
-    currentZipCode
-    previousfirstName
-    previousmiddleI
-    previouslastName
-    previousStreet1
-    previousStreet2
-    previousCity
-    previousState
-    previousZipCode
+    row1 = [x.lower() for x in row1]
+    row2 = [x.lower() for x in row2]
 
+    PAN = calculatePatientAcctNumConfidence(row1[2], row2[2])
+    CN = calculateNameConfidence(row1[3], row1[5], row2[3], row2[5])
+    CMI = calculateMiddleIConfidence(row1[4], row2[4])
+    DOB = calculateDOBConfidence(row1[6], row2[6])
+    S = calculateSexConfidence(row1[7], row2[7])
+    CS1 = calculateStreet1Confidence(row1[8], row2[8])
+    CS2 = calculateStreet2Confidence(row1[9], row2[9])
+    CC = calculateCityConfidence(row1[10], row2[10])
+    CS = calculateStateConfidence(row1[11], row2[11])
+    CZ = calculateZipConfidence(row1[12], row2[12])
+
+    PN = calculateNameConfidence(row1[13], row1[15], row2[13], row2[15])
+    PMI = calculateMiddleIConfidence(row1[14], row2[14])
+    PS1 = calculateStreet1Confidence(row1[16], row2[16])
+    PS2 = calculateStreet2Confidence(row1[17], row2[17])
+    PC = calculateCityConfidence(row1[18], row2[18])
+    PS = calculateStateConfidence(row1[19], row2[19])
+    PZ = calculateZipConfidence(row1[20], row2[20])
+
+    return PAN + CN + CMI + DOB + S + CS1 + CS2 + CC + CS + CZ +
+    PN + PMI + PS1 + PS2 + PC + PS + PZ
 
 
 
