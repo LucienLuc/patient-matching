@@ -1,6 +1,6 @@
 #code our own algorithm or use libraries?
-import fuzzy 
-import Levenshtein
+import fuzzy #pip install fuzzy
+import Levenshtein #pip install python-levenshtein
 import collections
 import string
 
@@ -15,8 +15,8 @@ def compareFirstLastSwap(first1, last1, first2, last2):
 	return (first1 == last2) and (last1 == first2)
 
 def compareWordsWithoutSpecialChars(word1, word2):
-	remove = string.punctuation + string.whitespace
-    return word1.translate(None, remove) == word2.translate(None, remove)
+        remove = string.punctuation + string.whitespace
+        return word1.translate(None, remove) == word2.translate(None, remove)
 
 def abbrevSentence(sentence):
 	result = ''
