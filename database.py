@@ -2,7 +2,7 @@ import csv
 import mysql.connector
 from mysql.connector import errorcode
 
-if __name__ == "main":
+if __name__ == "__main__":
     data = []
     with open("Patient Matching Data.csv") as f:
         reader = csv.reader(f)
