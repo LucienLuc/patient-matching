@@ -47,6 +47,9 @@ def removeSpecialCharsFromWord(word):
 	# returns word without punctuation and whitespace
 	return word.translate(None, remove)
 
+def removeNumbersFromWord(word):
+    return ''.join([i for i in word if not i.isdigit()])
+
 def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
 
@@ -68,6 +71,8 @@ def abbrevWord(word):
 	return word[0]
 
 def compareDoubleMetaphone(word1, word2):
+        word1 = word1.removeSpecialCharsFromWord().removeNumbersFromWord()
+        word2 = word2.removeSpecialCharsFromWord().removeNumbersFromWord()
         dmeta = fuzzy.DMetaphone()
         return dmeta(word1[0]) == dmeta(word2[0]) or dmeta(word1[1]) == dmeta(word2[1])
 

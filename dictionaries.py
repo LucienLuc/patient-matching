@@ -85,5 +85,9 @@ streets = {
     'ter' : 'terrace',
     'tr' : 'trail',
     'trl' : 'trail',
-    'wy' : 'way'
+    'wy' : 'way',
+    'e' : 'east',
+    'n' : 'north',
+    'w' : 'west',
+    's' : 'south'
     }

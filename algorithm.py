@@ -50,6 +50,8 @@ def calculateSexConfidence(sex1, sex2):
 def calculateStreetConfidence(street1, street2):
     street1 = street1.split(' ')
     street2 = street2.split(' ')
+
+    #convert street abbreviations to fully spelled out
     try:
         street1[-1] = dictionaries.streets[street1[-1]]
     except KeyError:
@@ -59,6 +61,10 @@ def calculateStreetConfidence(street1, street2):
     except KeyError:
         pass
     
+    #levenshtein
+    #double metaphone
+    #shortened versions
+
     return 0
 
 def calculateCityConfidence(city1, city2):
@@ -67,10 +73,10 @@ def calculateCityConfidence(city1, city2):
     #levenshtein
     distance = utility.levenshtein(city1, city2)
 
-    dmetascore = 0
+    dmetaScore = 0
     #double metaphone
     if utility.compareDoubleMetaphone(city1, city2):
-        dmetascore = 0.8
+        dmetaScore = 0.5
 
     #calculate abbreviations
     abbreviationScore = 0
@@ -81,9 +87,9 @@ def calculateCityConfidence(city1, city2):
     elif utility.compareByContains(city1,city2):
         shortenedScore = (min(len(city1),len(city2)))/max(len(city1),len(city2))
 
-    confidence = min(1/(pow(distance+1, distance+1)) + abbreviationScore + shortenedScore, 1)
+    confidence = min(1/(pow(distance+1, distance+1)) + dmetaScore + abbreviationScore + shortenedScore, 1)
     return confidence
-calculateCityConfidence("George", "Sarah")
+
 #typos on abbreviations really screw this up   
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
