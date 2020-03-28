@@ -3,6 +3,27 @@ import fuzzy
 import Levenshtein
 import collections
 import string
+import csv
+
+# csv repo 1 = https://github.com/carltonnorthern/nickname-and-diminutive-names-lookup
+# csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
+
+def getCSVContents(csvFilePath):
+	data = []
+	with open(csvFilePath) as f:
+		reader = csv.reader(f)
+		for row in reader:
+			data.append(row)
+	return data
+
+def compareNameByNickname(name1, name2):
+	csvFilePaths = ['nicknames1.csv','nicknames2.csv']
+	allCSVData = getCSVContents(csvFilePaths[0]) + getCSVContents(csvFilePaths[1])
+	for nicknameList in allCSVData:
+		if name1 in nicknameList and name2 in nicknameList:
+			# returns true if name 1 is a nickname for name 2 or vice versa
+			return True
+	return False
 
 def compareSentenceBySwap(sentence1, sentence2, separationValue):
 	tokens1 = sentence1.split(separationValue)
@@ -15,9 +36,13 @@ def compareFirstLastSwap(first1, last1, first2, last2):
 	return (first1 == last2) and (last1 == first2)
 
 def compareWordsWithoutSpecialChars(word1, word2):
-	remove = string.punctuation + string.whitespace
 	# returns true if the words are the same without punctuation and whitespace
-    return word1.translate(None, remove) == word2.translate(None, remove)
+    return removeSpecialCharsFromWord(word1) == removeSpecialCharsFromWord(word2)
+
+def removeSpecialCharsFromWord(word):
+	remove = string.punctuation + string.whitespace
+	# returns word without punctuation and whitespace
+	return word.translate(None, remove)
 
 def abbrevSentence(sentence):
 	result = ''
