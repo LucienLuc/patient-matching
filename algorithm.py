@@ -8,10 +8,12 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     return 0
 
 def calculateNameConfidence(first1, last1, first2, last2):
-    utility.compareFirstLastSwap()
-    calculateNameConfidence()
-    calculateNameConfidence()
-    
+    total = 0
+    if utility.compareFirstLastSwap(first1, last1, first2, last2):
+        total += 0.2
+    total += calculateNameConfidence(first1, first2) * 0.3
+    total += calculateNameConfidence(last1, last2) * 0.5
+    return total
 def calculateNameConfidence(name1, name2):
     utility.levenshtein()
     utility.compareByAbbrevWord()
