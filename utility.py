@@ -16,6 +16,11 @@ def getCSVContents(csvFilePath):
 			data.append(row)
 	return data
 
+def compareSentencesByKeyboardDistance(sentence1, sentence2):
+
+def compareWordsByKeyboardDistance(word1, word2):
+
+
 def compareNameByNickname(name1, name2):
 	csvFilePaths = ['nicknames1.csv','nicknames2.csv']
 	allCSVData = getCSVContents(csvFilePaths[0]) + getCSVContents(csvFilePaths[1])
@@ -51,9 +56,10 @@ def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
 
 def compareByCommonMisspells(name1, name2):
-        return 0
+        return False
+		
 def compareByVisuallySimilarChars(word1, word2):
-        return 0
+        return False
 
 def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)

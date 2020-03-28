@@ -16,17 +16,33 @@ def calculateNameConfidence(first1, last1, first2, last2):
     total += calculateNameConfidence(first1, first2) * 0.3
     total += calculateNameConfidence(last1, last2) * 0.5
     return total
-def calculateNameConfidence(name1, name2):
-    utility.levenshtein()
-    utility.compareByAbbrevWord()
-    utility.compareWordsWithoutSpecialChars()
-    utility.compareNameByNickname()
-    utility.compareByContains()
-    utility.doubleMetaphone()
-    utility.compareByCommonMisspells()
-    utility.compareByVisuallySimilarChars()
 
-    # keyboard distance
+def calculateNameConfidence(name1, name2):
+    total = 0
+
+    if utility.compareByAbbrevWord(name1, name2):
+        total +=
+    
+    if utility.compareWordsWithoutSpecialChars(name1, name2):
+        total +=
+
+    if utility.compareNameByNickname(name1, name2):
+        total +=
+    
+    if utility.compareByContains(name1, name2):
+        total +=
+
+    if utility.compareByCommonMisspells(name1, name2):
+        total +=
+    
+    if utility.doubleMetaphone(name1, name2):
+        total +=
+
+    utility.compareByVisuallySimilarChars(name1, name2):
+    
+    utility.compareByKeyboardDistance(name1, name2)
+
+    utility.levenshtein(name1, name2)
 
 def calculateMiddleIConfidence(middle1, middle2):
     return 0
