@@ -9,16 +9,6 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
 
 def calculateNameConfidence(first1, last1, first2, last2):
     utility.compareFirstLastSwap()
-<<<<<<< HEAD
-    calculateFirstNameConfidence()
-    calculateLastNameConfidence()
-    return 0
-def calculateFirstNameConfidence(first1, first2):
-    return 0
-
-def calculateLastNameConfidence(last1, last2):
-    return 0
-=======
     calculateNameConfidence()
     calculateNameConfidence()
     
@@ -33,7 +23,6 @@ def calculateNameConfidence(name1, name2):
     utility.compareByVisuallySimilarChars()
 
     # keyboard distance
->>>>>>> 152d306fd1efde271c74fc4b226b73c23cb70719
 
 def calculateMiddleIConfidence(middle1, middle2):
     return 0
@@ -135,6 +124,10 @@ def groupByConfidenceScore(data, confidenceThreshold):
                     group.append(row2)
         result.add(group)
     # return an array of groups
+    for group in result:
+        print("group: ")
+        for person in group:
+            print(person[1] + ", ")
     return result
 
 
