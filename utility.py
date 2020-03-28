@@ -25,6 +25,9 @@ def compareNameByNickname(name1, name2):
 			return True
 	return False
 
+def compareByContains(word1, word2):
+	return word1 in word2 or word2 in word1:
+
 def compareSentenceBySwap(sentence1, sentence2, separationValue):
 	tokens1 = sentence1.split(separationValue)
 	tokens2 = sentence2.split(separationValue)
@@ -44,6 +47,17 @@ def removeSpecialCharsFromWord(word):
 	# returns word without punctuation and whitespace
 	return word.translate(None, remove)
 
+def compareByAbbrevWord(word1, word2):
+	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
+
+def compareByCommonMisspells(name1, name2):
+
+def compareByVisuallySimilarChars(word1, word2):
+
+
+def compareByAbbrevSentence(sentence1, sentence2):
+	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
+
 def abbrevSentence(sentence):
 	result = ''
 	for word in sentence:
@@ -58,7 +72,7 @@ def doubleMetaphone(word1, word2):
         return dmeta(word1), dmeta(word2)
 
 def levenshtein(string1, string2):
-        return Levenshtein.distance(string1,string2)
+    return Levenshtein.distance(string1,string2)
 
 '''
 name1 = 'Drake'

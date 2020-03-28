@@ -16,14 +16,20 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     
 def calculateNameConfidence(first1, last1, first2, last2):
     utility.compareFirstLastSwap()
-    calculateFirstNameConfidence()
-    calculateLastNameConfidence()
+    calculateNameConfidence()
+    calculateNameConfidence()
     
-def calculateFirstNameConfidence(first1, first2):
+def calculateNameConfidence(name1, name2):
+    utility.levenshtein()
+    utility.compareByAbbrevWord()
+    utility.compareWordsWithoutSpecialChars()
+    utility.compareNameByNickname()
+    utility.compareByContains()
+    utility.doubleMetaphone()
+    utility.compareByCommonMisspells()
+    utility.compareByVisuallySimilarChars()
 
-
-def calculateLastNameConfidence(last1, last2):
-    
+    # keyboard distance
 
 def calculateMiddleIConfidence(middle1, middle2):
     
