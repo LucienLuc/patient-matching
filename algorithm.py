@@ -1,8 +1,16 @@
 import csv
 import utility
-import database
-#dictreader object
+#import database
 
+print(utility.doubleMetaphone('2341', '2341'))
+print(utility.states['ca'])
+try:
+    print(utility.states['aa'])
+except KeyError:
+    print("No Key")
+exit()
+
+#assume all strings all lower
 
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     
@@ -32,10 +40,31 @@ def calculateStreet2Confidence(street21, middle22):
     
 def calculateCityConfidence(city1, city2):
     
+
+#typos on abbreviations really screw this up
 def calculateStateConfidence(state1, state2):
-    
-def calculateZipConfidence(zip1, zip2):
-    
+    #convert abbreviations to full states
+    try: 
+        state1 = utility.states[state1]
+    except KeyError:
+        pass
+    try:
+        state2 = utility.states[state2]
+    except KeyError:
+        pass
+    distance = utility.levenshtein(state1,state2)
+    confidence = 1/(distance+1)
+    return confidence
+
+def calculateZipIConfidence(zip1, zip2):
+    distance = utility.levenshtein(zip1,zip2) 
+    # distance -> confidence
+    #0 -> 1
+    #1 -> 0.5
+    #2 -> 0.11
+    #3 -> .0156
+    confidence = 1/(pow(distance+1,distance))
+    return confidence
 
 
 def getConfidenceScore(row1, row2):
