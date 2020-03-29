@@ -6,6 +6,7 @@ import string
 import csv
 import homoglyphs
 import dictionaries
+import re
 
 # csv repo 1 = https://github.com/carltonnorthern/nickname-and-diminutive-names-lookup
 # csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
@@ -19,32 +20,17 @@ def getCSVContents(csvFilePath):
 	return data
 
 def compareWordsByKeyboardDistance(word1, word2):
-	total = 0
-	for i,j in word1,word2:
-		x1 = dictionaries.keyboard_cartesian[i][x]
-		y1 = dictionaries.keyboard_cartesian[i][y]
-		x2 = dictionaries.keyboard_cartesian[j][x]
-		y2 = dictionaries.keyboard_cartesian[j][y]
-		total += manhattanDistance(x1, y1, x2, y2)
-	return total
+    total = 0
+    for i,j in zip(word1,word2):
+        x1 = dictionaries.keyboard_cartesian[i]['x']
+        y1 = dictionaries.keyboard_cartesian[i]['y']
+        x2 = dictionaries.keyboard_cartesian[j]['x']
+        y2 = dictionaries.keyboard_cartesian[j]['y']
+        total += manhattanDistance(x1, y1, x2, y2)
+    return total
 	
 def manhattanDistance(x1, y1, x2, y2):
 	return abs(x2 - x1) + abs(y2 - y1)
-
-'''
-def euclidean_distance(a,b):
-    X = (keyboard_cartesian[a]['x'] - keyboard_cartesian[b]['x'])**2
-    Y = (keyboard_cartesian[a]['y'] - keyboard_cartesian[b]['y'])**2
-    return math.sqrt(X+Y)
-     
-     
-for i in keyboard_cartesian.keys():
-    for j in keyboard_cartesian.keys():
-        distance_from_i_to_j = [(i, j, euclidean_distance(i, j))]
-'''
-
-
-
 
 def removeNumbersFromWord(word):
     return ''.join([i for i in word if not i.isdigit()])
@@ -76,19 +62,21 @@ def compareWordsWithoutSpecialChars(word1, word2):
     return removeSpecialCharsFromWord(word1) == removeSpecialCharsFromWord(word2)
 
 def removeSpecialCharsFromWord(word):
-	remove = string.punctuation + string.whitespace
-	# returns word without punctuation and whitespace
-	return word.translate(None, remove)
+    return re.sub(r'\W+', '', word)
 
 def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
 
 def compareByVisuallySimilarChars(word1, word2):
 	# rn and m. deal with it. cant go char by char
-	for i,j in word1,word2:
-		if not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or dictionaries.similarChars[i] in dictionaries.similarChars[j] or i==j:
-			return False
-	return True
+    for i,j in zip(word1,word2):
+        try:
+            if (not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or 
+            dictionaries.similarChars[i] in dictionaries.similarChars[j] or i==j):
+                return False
+        except KeyError:
+            pass
+    return True
 
 def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
@@ -104,8 +92,8 @@ def abbrevWord(word):
 
 def compareByDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone(4)
-        print(dmeta(word1)) 
-        print(dmeta(word2))
+        #print(dmeta(word1)) 
+        #print(dmeta(word2))
         return dmeta(word1)[0] == dmeta(word2)[0] or (dmeta(word1)[1] == dmeta(word2)[1] != None and
         dmeta(word1)[1] == dmeta(word2)[1])
 

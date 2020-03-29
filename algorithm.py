@@ -7,11 +7,13 @@ import dictionaries
 #assume all strings all lower
 
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
+    if patientAcctNum1 == "" or patientAcctNum1 == "":
+        return 0
     distance = utility.levenshtein(patientAcctNum1, patientAcctNum2)
     confidence = 1/pow(distance+1,0.15*distance)
     return confidence
 
-def calculateNameConfidence(first1, last1, first2, last2):
+def calculateFullNameConfidence(first1, last1, first2, last2):
     total = 0
     if utility.compareFirstLastSwap(first1, last1, first2, last2):
         total += 0.2
@@ -37,7 +39,8 @@ def calculateNameConfidence(name1, name2):
     if utility.compareByVisuallySimilarChars(name1, name2):
         total += 0.9
     
-    utility.compareByKeyboardDistance(name1, name2)
+    #CHANGE
+    manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
 
     levDistance = utility.levenshtein(name1, name2)
     levConfidence = 1/(pow(levDistance+1,0.9*levDistance))
@@ -65,7 +68,8 @@ def calculateMiddleIConfidence(middle1, middle2):
     if utility.compareByVisuallySimilarChars(middle1, middle2):
         total += 0.9
     
-    utility.compareByKeyboardDistance(middle1, middle2)
+    #change
+    manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
 
     levDistance = utility.levenshtein(middle1, middle2)
     levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
@@ -110,8 +114,8 @@ def calculateStreetConfidence(street1, street2):
         total += 1
     
     #double metaphone for each word
-    for elem1, elem2 in street1,street2:
-        if elem1 == elem2 == None:
+    for elem1, elem2 in zip(street1, street2):
+        if elem1 == None or elem2 == None:
             break
         if utility.compareByDoubleMetaphone(elem1,elem2):
             total += 1/(max(len(street1),len(street2)))
@@ -128,7 +132,7 @@ def calculateStreetConfidence(street1, street2):
 
     return min(total, 1)
 
-print(calculateStreetConfidence('8178 Talismen Center', '8178 Talisman Center'))
+#print(calculateStreetConfidence('1241 Shrug Center', '8178 Talisman Center'))
 
 def calculateCityConfidence(city1, city2):
 
@@ -138,7 +142,7 @@ def calculateCityConfidence(city1, city2):
 
     dmetaScore = 0
     #double metaphone
-    if utility.compareDoubleMetaphone(city1, city2):
+    if utility.compareByDoubleMetaphone(city1, city2):
         dmetaScore = 0.5
 
     #calculate abbreviations
@@ -187,7 +191,7 @@ def getConfidenceScore(row1, row2):
 
     #use dictionary in case their columns are messed up
     PAN = calculatePatientAcctNumConfidence(row1[2], row2[2])
-    CN = calculateNameConfidence(row1[3], row1[5], row2[3], row2[5])
+    CN = calculateFullNameConfidence(row1[3], row1[5], row2[3], row2[5])
     CMI = calculateMiddleIConfidence(row1[4], row2[4])
     DOB = calculateDOBConfidence(row1[6], row2[6])
     S = calculateSexConfidence(row1[7], row2[7])
@@ -197,7 +201,7 @@ def getConfidenceScore(row1, row2):
     CS = calculateStateConfidence(row1[11], row2[11])
     CZ = calculateZipConfidence(row1[12], row2[12])
 
-    PN = calculateNameConfidence(row1[13], row1[15], row2[13], row2[15])
+    PN = calculateFullNameConfidence(row1[13], row1[15], row2[13], row2[15])
     PMI = calculateMiddleIConfidence(row1[14], row2[14])
     PS1 = calculateStreetConfidence(row1[16], row2[16])
     PS2 = calculateStreetConfidence(row1[17], row2[17])
@@ -206,8 +210,6 @@ def getConfidenceScore(row1, row2):
     PZ = calculateZipConfidence(row1[20], row2[20])
 
     return PAN + CN + CMI + DOB + S + CS1 + CS2 + CC + CS + CZ + PN + PMI + PS1 + PS2 + PC + PS + PZ
-
-
 
 def groupByConfidenceScore(data, confidenceThreshold):
     alreadyAddedList = []
