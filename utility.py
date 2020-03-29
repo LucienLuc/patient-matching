@@ -20,16 +20,6 @@ def getCSVContents(csvFilePath):
 	return data
 
 def compareWordsByKeyboardDistance(word1, word2):
-<<<<<<< HEAD
-	total = 0
-	for i,j in zip(word1,word2):
-		x1 = dictionaries.keyboard_cartesian[i][x]
-		y1 = dictionaries.keyboard_cartesian[i][y]
-		x2 = dictionaries.keyboard_cartesian[j][x]
-		y2 = dictionaries.keyboard_cartesian[j][y]
-		total += manhattanDistance(x1, y1, x2, y2)
-	return total
-=======
     total = 0
     for i,j in zip(word1,word2):
         x1 = dictionaries.keyboard_cartesian[i]['x']
@@ -38,7 +28,6 @@ def compareWordsByKeyboardDistance(word1, word2):
         y2 = dictionaries.keyboard_cartesian[j]['y']
         total += manhattanDistance(x1, y1, x2, y2)
     return total
->>>>>>> a8866f1ed42feb0463b8364f31c2fc04f4e69835
 	
 def manhattanDistance(x1, y1, x2, y2):
 	return abs(x2 - x1) + abs(y2 - y1)
@@ -80,12 +69,6 @@ def compareByAbbrevWord(word1, word2):
 
 def compareByVisuallySimilarChars(word1, word2):
 	# rn and m. deal with it. cant go char by char
-<<<<<<< HEAD
-	for i,j in zip(word1,word2):
-		if not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or dictionaries.similarChars[i] in dictionaries.similarChars[j] or i==j:
-			return False
-	return True
-=======
     for i,j in zip(word1,word2):
         try:
             if (not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or 
@@ -94,7 +77,6 @@ def compareByVisuallySimilarChars(word1, word2):
         except KeyError:
             pass
     return True
->>>>>>> a8866f1ed42feb0463b8364f31c2fc04f4e69835
 
 def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
