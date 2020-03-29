@@ -13,7 +13,16 @@ def main():
         print("Usage: python main.py <path-to-mysql database>")
         exit()
     '''
+    try:
+        cnx = mysql.connector.connect(user='sql3329916', password='APzc3QtGkq',
+                                host='sql3.freemysqlhosting.net',
+                                database='sql3329916')
+        cursor = cnx.cursor()
+    except:
+        print("Error")
+        exit()
     algorithm.start()
+    algorithm.groupByConfidenceScore(cnx,0.8)
 
 if __name__ == "__main__":
     main()

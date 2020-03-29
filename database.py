@@ -8,13 +8,16 @@ if __name__ == "__main__":
         reader = csv.reader(f)
         for row in reader:
             data.append(row)
-
+    '''
     cnx = mysql.connector.connect(user='mVlV7hcyfk', password='SXunDqvhY5',
                                 host='remotemysql.com',
                                 database='mVlV7hcyfk')
-
+    '''
+    cnx = mysql.connector.connect(user='sql3329916', password='APzc3QtGkq',
+                                host='sql3.freemysqlhosting.net',
+                                database='sql3329916')
     cursor = cnx.cursor()
-    DB_NAME = "mVlV7hcyfk"
+    DB_NAME = "sql3329916"
 
     TABLE = {}
 

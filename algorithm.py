@@ -12,10 +12,10 @@ from mysql.connector import errorcode
 #remove trailing and leading whitespace
 def start():
     try:
-        cnx = mysql.connector.connect(user='mVlV7hcyfk', password='SXunDqvhY5',
-                                host='remotemysql.com',
-                                database='mVlV7hcyfk')
-        #cursor = cnx.cursor()
+        cnx = mysql.connector.connect(user='sql3329916', password='APzc3QtGkq',
+                                host='sql3.freemysqlhosting.net',
+                                database='sql3329916')
+        cursor = cnx.cursor()
     except:
         print("Error")
         exit()
@@ -58,11 +58,12 @@ def start():
         "  `Previous Street 1 DMeta` varchar(50) NOT NULL,"
         "  `Previous Street 2 DMeta` varchar(50) NOT NULL,"
         "  `Previous City Abbrev` varchar(15) NOT NULL,"
-        "  `Previous City DMeta` varchar(30) NOT NULL)"
+        "  `Previous City DMeta` varchar(30) NOT NULL,"
+        "  `PatientID` varchar(30) NOT NULL)"
     )
 
     try:
-        cnx.cmd_query(TABLE['createAdaptedTable'])
+        cursor.execute(TABLE['createAdaptedTable'])
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                 print("already exists.")
@@ -70,17 +71,22 @@ def start():
             print(err.msg)
     else:
         print("OK")
+    
     #Find number of rows
-    count = cnx.info_query(('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1'))[0]
+    cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
+    count = cursor.fetchone()[0]
 
     #insert into rows
     INSERT = {}
     RETRIEVE = {}
+    patientID = ""
     for i in range(1,count+1):
         RETRIEVE['retrieve'] = (
             "SELECT * from `Data` WHERE PatientID=" + str(i)
         )
-        row = cnx.info_query(RETRIEVE['retrieve'])[2:]
+        patientID = str(i)
+        cursor.execute(RETRIEVE['retrieve'])
+        row = cursor.fetchone()[2:]
         insertValues = []
         #add columns into new table 
         for i in range(len(row)):
@@ -112,13 +118,13 @@ def start():
         #add special columns
         row = row[1:]
         #firstNameDMeta
-        insertValues.append(utility.doubleMetaphone(row[0]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[0]))
         #True MI
         insertValues.append(utility.abbrevWord(row[1]))
         #MI DMeta
-        insertValues.append(utility.doubleMetaphone(row[1]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[1]))
         #Last Name DMeta
-        insertValues.append(utility.doubleMetaphone(row[2]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[2]))
         #Current Street1 DMeta
         insertValues.append(utility.streetToDoubleMetaphone(row[5]))
         #Current Street2 Dmeta
@@ -126,15 +132,15 @@ def start():
         #Current City Abbrev
         insertValues.append(utility.abbrevSentence(row[7]))
         #Current City DMeta
-        insertValues.append(utility.doubleMetaphone(row[7]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[7]))
         #Previous First Name DMeta
-        insertValues.append(utility.doubleMetaphone(row[10]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[10]))
         #Previous True MI
         insertValues.append(utility.abbrevWord(row[11]))
         #Previous MI DMeta
-        insertValues.append(utility.doubleMetaphone(row[11]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[11]))
         #Previous Last Name DMeta
-        insertValues.append(utility.doubleMetaphone(row[12]))
+        insertValues.append(utility.streetToDoubleMetaphone(row[12]))
         #Previous Street 1 DMeta
         insertValues.append(utility.streetToDoubleMetaphone(row[13]))
         #Previous Street 2 DMeta
@@ -142,22 +148,18 @@ def start():
         #Previous City Abbrev
         insertValues.append(utility.abbrevSentence(row[15]))
         #Previous City DMeta
-        temp = row[16].split(' ')
-        for i in range(len(temp)):
-            temp[i] = utility.doubleMetaphone(temp[i])
-        res = ""
-        for elem in temp:
-            if type(elem) == bytes:
-                res += elem.decode(encoding = "utf-8")
-        insertValues.append(res)
+        insertValues.append(utility.streetToDoubleMetaphone(row[16]))
+        #append patientID because we forgot
+        insertValues.append(patientID)
         print(insertValues)
         formatted = "'" + "', '".join(insertValues) + "'"
         INSERT['insertData'] = (
             "INSERT INTO AdaptedData "
             "VALUES (" + formatted + ");"
         )
-        cnx.cmd_query(INSERT['insertData'])
+        cursor.execute(INSERT['insertData'])
     cnx.commit()
+    cursor.close()
     cnx.close()
 
 
@@ -408,16 +410,16 @@ def getConfidenceScore(row1, row2):
     DOB = calculateDOBConfidence(row1[4], row2[4])
     S = calculateSexConfidence(row1[5], row2[5])
     CS1 = calculateStreetConfidence(row1[6], row1[23], row2[6], row2[23]) 
-    CS2 = calculateStreetConfidence(row1[7], row1[23], row2[7], row2[23])
-    CC = calculateCityConfidence(row1[8], row1[24], row1[25], row2[8], row2[24], row2[25])
+    CS2 = calculateStreetConfidence(row1[7], row1[24], row2[7], row2[24])
+    CC = calculateCityConfidence(row1[8], row1[25], row1[26], row2[8], row2[25], row2[26])
     CS = calculateStateConfidence(row1[9], row2[9])
     CZ = calculateZipConfidence(row1[10], row2[10])
 
-    PN = calculateFullNameConfidence(row1[11], row1[26], row1[13], row1[29], row2[11], row2[26], row2[13], row2[29])
-    PMI = calculateMiddleIConfidence(row1[12], row1[27], row1[28], row2[12], row2[27], row2[28])
-    PS1 = calculateStreetConfidence(row1[14], row1[30], row2[14], row2[30])
-    PS2 = calculateStreetConfidence(row1[15], row1[31], row2[15], row2[31])
-    PC = calculateCityConfidence(row1[16], row1[32], row1[33], row2[16], row2[32], row2[33])
+    PN = calculateFullNameConfidence(row1[11], row1[27], row1[13], row1[30], row2[11], row2[27], row2[13], row2[30])
+    PMI = calculateMiddleIConfidence(row1[12], row1[28], row1[29], row2[12], row2[28], row2[29])
+    PS1 = calculateStreetConfidence(row1[14], row1[31], row2[14], row2[31])
+    PS2 = calculateStreetConfidence(row1[15], row1[32], row2[15], row2[32])
+    PC = calculateCityConfidence(row1[16], row1[33], row1[34], row2[16], row2[33], row2[34])
     PS = calculateStateConfidence(row1[17], row2[17])
     PZ = calculateZipConfidence(row1[18], row2[18])
 
@@ -448,12 +450,12 @@ def getConfidenceScore(row1, row2):
     #print("Total confidence: " + str(score))
     return score
 
-def groupByConfidenceScore(cursor, confidenceThreshold):
-    retTable ='''
-    CREATE TABLE Return LIKE Data;
-    INSERT INTO Return SELECT * FROM Data;
-    ALTER TABLE Return ADD GroupID datatype;
-    '''
+def groupByConfidenceScore(connect, confidenceThreshold):
+    cursor = connect.cursor()
+    retTable = {}
+    retTable = (
+    "ALTER TABLE Data ADD GroupID2 varchar(30);"
+    )
     cursor.execute(retTable)
     alreadyAddedList = []
     groupCount = 0
@@ -464,22 +466,16 @@ def groupByConfidenceScore(cursor, confidenceThreshold):
         row1 = cursor.fetchone()
         if row1 in alreadyAddedList:
             continue
-        cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(i))
+        cursor.execute('UPDATE Data SET GroupID2=' + str(groupCount) + ' WHERE PatientID=' + str(i))
         alreadyAddedList.append(row1)
         for j in range(1,count+1):
             cursor.execute("SELECT * from `AdaptedData` WHERE PatientID=" + str(j))
             row2 = cursor.fetchone()
             if row2 not in alreadyAddedList:
                 if getConfidenceScore(row1, row2) >= confidenceThreshold:
-                    cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(j))
+                    cursor.execute('UPDATE Data SET GroupID2=' + str(groupCount) + ' WHERE PatientID=' + str(j))
                     alreadyAddedList.append(row2)
-                #exit()
-        print(len(group))
-        # print(group)
         groupCount += 1
-    # return an array of groups
-    print(len(result))
-    return result
 
 
 

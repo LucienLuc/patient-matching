@@ -12,32 +12,39 @@ import re
 # csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
 
 def streetToDoubleMetaphone(street):
-    temp = street.split(' ')
+    l = street.split(' ')
     try:
-        temp[-1] = dictionaries.streets[temp[-1]]
+        l[-1] = dictionaries.streets[l[-1]]
     except KeyError:
         pass
-    for i in range(len(temp)):
-        temp[i] = doubleMetaphone(temp[i])
-    res = " ".join([str(elem) for elem in temp])
+    k = []
+    for i in l:
+        r = doubleMetaphone(i)
+        if type(r[0]) is bytes:
+            r[0] = r[0].decode('utf-8')
+        if type(r[1]) is bytes:
+            r[1] = r[1].decode('utf-8')
+        k.append(str(r[0]) + ' ' + str(r[1]))
+    
+    res = ','.join(k)
     return res
 
 def compareDoubleMetaphones(name1DM, name2DM):
-	name1DM = name1DM.split(' ')
-	name2DM = name2DM.split(' ')
-	one = name1DM[0] == None or name2DM[0] == None
-	two = name1DM[0] == name2DM[0] and one
-	three = name2DM[1] != None and name1DM[0] != None and name1DM[0] == name2DM[1]
-	four = one and name2DM[1] != None and name1DM[1] != None and name1DM[1] == name2DM[1]
-	if one:
-		return False
-	if two:
-		return True
-	if three:
-		return True
-	if four:
-		return True
-	return False
+    name1DM = name1DM.split(' ')
+    name2DM = name2DM.split(' ')
+    one = name1DM[0] == 'None' or name2DM[0] == 'None'
+    two = name1DM[0] == name2DM[0] and one
+    three = name2DM[1] != 'None' and name1DM[0] != 'None' and name1DM[0] == name2DM[1]
+    four = one and name2DM[1] != 'None' and name1DM[1] != 'None' and name1DM[1] == name2DM[1]
+    if one:
+        return False
+    if two:
+        return True
+    if three:
+        return True
+    if four:
+        return True
+    return False
 
 def compareSentDoubleMetaphones(sent1DM, sent2DM):
 	sent1DM = sent1DM.split(',')
@@ -133,11 +140,8 @@ def abbrevWord(word):
 
 def doubleMetaphone(word):
     dmeta = fuzzy.DMetaphone(4)
-    res = dmeta(word)[0]
-    if res != None:
-        return dmeta(word)[0].decode(encoding = "utf-8")
-    else:
-        return ""
+    res = dmeta(word)
+    return res
 
 def compareByDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone(4)
