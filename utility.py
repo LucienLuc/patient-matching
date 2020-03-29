@@ -22,6 +22,8 @@ def compareSentencesByKeyboardDistance(sentence1, sentence2):
 
 def compareWordsByKeyboardDistance(word1, word2):
 
+def removeNumbersFromWord(word):
+    return ''.join([i for i in word if not i.isdigit()])
 
 def compareNameByNickname(name1, name2):
 	csvFilePaths = ['nicknames1.csv','nicknames2.csv']
