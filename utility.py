@@ -19,12 +19,7 @@ def streetToDoubleMetaphone(street):
         pass
     for i in range(len(temp)):
         temp[i] = doubleMetaphone(temp[i])
-    
-    res = ""
-    for elem in temp:
-        if type(elem) == bytes:
-            res += elem.decode(encoding = "utf-8")
-    print(res)
+    res = " ".join([str(elem) for elem in temp])
     return res
 
 def compareDoubleMetaphones(name1DM, name2DM):
@@ -103,7 +98,7 @@ def compareWordsWithoutSpecialChars(word1, word2):
     return removeSpecialCharsFromWord(word1) == removeSpecialCharsFromWord(word2)
 
 def removeSpecialCharsFromWord(word):
-    return re.sub(r'\W+', '', word)
+    return re.sub(r'[^a-zA-Z0-9\s]+', '', word) 
 
 def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
@@ -123,10 +118,11 @@ def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
 
 def abbrevSentence(sentence):
-	result = ''
-	for word in sentence:
-		result += abbrevWord(word)
-	return result
+    result = ''
+    temp = sentence.split(' ')
+    for word in temp:
+        result += abbrevWord(word)
+    return result
 
 def abbrevWord(word):
     if word == "":
@@ -135,7 +131,11 @@ def abbrevWord(word):
 
 def doubleMetaphone(word):
     dmeta = fuzzy.DMetaphone(4)
-    return dmeta(word)[0]
+    res = dmeta(word)[0]
+    if res != None:
+        return dmeta(word)[0].decode(encoding = "utf-8")
+    else:
+        return ""
 
 def compareByDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone(4)

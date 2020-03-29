@@ -15,11 +15,10 @@ def start():
         cnx = mysql.connector.connect(user='mVlV7hcyfk', password='SXunDqvhY5',
                                 host='remotemysql.com',
                                 database='mVlV7hcyfk')
-        cursor = cnx.cursor()
+        #cursor = cnx.cursor()
     except:
         print("Error")
         exit()
-    
     #Creates AdaptedTable
     TABLE = {}
     TABLE['createAdaptedTable'] = (
@@ -45,7 +44,7 @@ def start():
         "  `Previous Zipcode` varchar(10) NOT NULL,"
 
         "  `First Name DMeta` varchar(15) NOT NULL,"
-        "  `True MI` varchar(1) NOT NULL,"
+        "  `True MI` varchar(10) NOT NULL,"
         "  `MI DMeta` varchar(15) NOT NULL,"
         "  `Last Name DMeta` varchar(15) NOT NULL,"
         "  `Current Street 1 DMeta` varchar(50) NOT NULL,"
@@ -63,7 +62,7 @@ def start():
     )
 
     try:
-        cursor.execute(TABLE['createAdaptedTable'])
+        cnx.cmd_query(TABLE['createAdaptedTable'])
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                 print("already exists.")
@@ -71,10 +70,8 @@ def start():
             print(err.msg)
     else:
         print("OK")
-    
     #Find number of rows
-    cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
-    count = cursor.fetchone()[0]
+    count = cnx.info_query(('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1'))[0]
 
     #insert into rows
     INSERT = {}
@@ -83,12 +80,10 @@ def start():
         RETRIEVE['retrieve'] = (
             "SELECT * from `Data` WHERE PatientID=" + str(i)
         )
-        cursor.execute(RETRIEVE['retrieve'])
-        row = cursor.fetchone()[2:]
+        row = cnx.info_query(RETRIEVE['retrieve'])[2:]
         insertValues = []
-
         #add columns into new table 
-        for i in range(2,len(row)):
+        for i in range(len(row)):
             newData = row[i].strip()
             newData = newData.lower()
             #is on sex
@@ -104,14 +99,14 @@ def start():
                     temp[-1] = dictionaries.streets[temp[-1]]
                 except KeyError:
                     pass
-                newData = ''.join([str(elem) for elem in temp])
+                newData = ' '.join([str(elem) for elem in temp])
             #is on state
             elif i == 9:
                 try:
                     newData = dictionaries.states[newData]
                 except KeyError:
                     pass
-            newData = utility.removeSpecialCharsFromWord(row[i])
+            newData = utility.removeSpecialCharsFromWord(newData)
             insertValues.append(newData)
         
         #add special columns
@@ -149,22 +144,20 @@ def start():
         #Previous City DMeta
         temp = row[16].split(' ')
         for i in range(len(temp)):
-            temp[i] = utility.doubleMetaphone(temp[i])[0]
+            temp[i] = utility.doubleMetaphone(temp[i])
         res = ""
         for elem in temp:
             if type(elem) == bytes:
                 res += elem.decode(encoding = "utf-8")
         insertValues.append(res)
-
         print(insertValues)
         formatted = "'" + "', '".join(insertValues) + "'"
         INSERT['insertData'] = (
             "INSERT INTO AdaptedData "
             "VALUES (" + formatted + ");"
         )
-        cursor.execute(INSERT['insertData'])
+        cnx.cmd_query(INSERT['insertData'])
     cnx.commit()
-    cursor.close()
     cnx.close()
 
 
