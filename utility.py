@@ -11,6 +11,21 @@ import re
 # csv repo 1 = https://github.com/carltonnorthern/nickname-and-diminutive-names-lookup
 # csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
 
+def streetToDoubleMetaphone(street):
+    temp = street.split(' ')
+    try:
+        temp[-1] = dictionaries.streets[temp[-1]]
+    except KeyError:
+        pass
+    for i in range(len(temp)):
+        temp[i] = doubleMetaphone(temp[i])
+    
+    res = ""
+    for elem in temp:
+        if type(elem) == bytes:
+            res += elem.decode(encoding = "utf-8")
+    print(res)
+    return res
 
 def compareDoubleMetaphones(name1DM, name2DM):
 	return dmeta(word1)[0] == dmeta(word2)[0] or (dmeta(word1)[1] == dmeta(word2)[1] != None and
@@ -102,7 +117,9 @@ def abbrevSentence(sentence):
 	return result
 
 def abbrevWord(word):
-	return word[0]
+    if word == "":
+        return ""
+    return word[0]
 
 def doubleMetaphone(word):
     dmeta = fuzzy.DMetaphone(4)

@@ -84,7 +84,7 @@ def start():
             "SELECT * from `Data` WHERE PatientID=" + str(i)
         )
         cursor.execute(RETRIEVE['retrieve'])
-        row = cursor.fetchone()[2:-1]
+        row = cursor.fetchone()[2:]
         insertValues = []
 
         #add columns into new table 
@@ -115,18 +115,57 @@ def start():
             insertValues.append(newData)
         
         #add special columns
-        row = row[1:-1]
-        print(row)
-
+        row = row[1:]
         #firstNameDMeta
         insertValues.append(utility.doubleMetaphone(row[0]))
+        #True MI
+        insertValues.append(utility.abbrevWord(row[1]))
+        #MI DMeta
+        insertValues.append(utility.doubleMetaphone(row[1]))
+        #Last Name DMeta
+        insertValues.append(utility.doubleMetaphone(row[2]))
+        #Current Street1 DMeta
+        insertValues.append(utility.streetToDoubleMetaphone(row[5]))
+        #Current Street2 Dmeta
+        insertValues.append(utility.streetToDoubleMetaphone(row[6]))
+        #Current City Abbrev
+        insertValues.append(utility.abbrevSentence(row[7]))
+        #Current City DMeta
+        insertValues.append(utility.doubleMetaphone(row[7]))
+        #Previous First Name DMeta
+        insertValues.append(utility.doubleMetaphone(row[10]))
+        #Previous True MI
+        insertValues.append(utility.abbrevWord(row[11]))
+        #Previous MI DMeta
+        insertValues.append(utility.doubleMetaphone(row[11]))
+        #Previous Last Name DMeta
+        insertValues.append(utility.doubleMetaphone(row[12]))
+        #Previous Street 1 DMeta
+        insertValues.append(utility.streetToDoubleMetaphone(row[13]))
+        #Previous Street 2 DMeta
+        insertValues.append(utility.streetToDoubleMetaphone(row[14]))
+        #Previous City Abbrev
+        insertValues.append(utility.abbrevSentence(row[15]))
+        #Previous City DMeta
+        temp = row[16].split(' ')
+        for i in range(len(temp)):
+            temp[i] = utility.doubleMetaphone(temp[i])[0]
+        res = ""
+        for elem in temp:
+            if type(elem) == bytes:
+                res += elem.decode(encoding = "utf-8")
+        insertValues.append(res)
 
+        print(insertValues)
         formatted = "'" + "', '".join(insertValues) + "'"
         INSERT['insertData'] = (
             "INSERT INTO AdaptedData "
             "VALUES (" + formatted + ");"
         )
         cursor.execute(INSERT['insertData'])
+    cnx.commit()
+    cursor.close()
+    cnx.close()
 
 
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
