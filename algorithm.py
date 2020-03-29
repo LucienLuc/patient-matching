@@ -7,7 +7,9 @@ import dictionaries
 #assume all strings all lower
 
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
-    return 0
+    distance = utility.levenshtein(patientAcctNum1, patientAcctNum2)
+    confidence = 1/pow(distance+1,0.15*distance)
+    return confidence
 
 def calculateNameConfidence(first1, last1, first2, last2):
     total = 0
@@ -21,34 +23,37 @@ def calculateNameConfidence(name1, name2):
     total = 0
 
     if utility.compareByAbbrevWord(name1, name2):
-        total +=
+        total += 0.2
     
     if utility.compareWordsWithoutSpecialChars(name1, name2):
-        total +=
+        total += 0.9
 
     if utility.compareNameByNickname(name1, name2):
-        total +=
+        total += 0.5
     
     if utility.compareByContains(name1, name2):
-        total +=
-
-    if utility.compareByCommonMisspells(name1, name2):
-        total +=
+        total += 0.6
     
     if utility.doubleMetaphone(name1, name2):
-        total +=
+        total += 0.8
 
-    utility.compareByVisuallySimilarChars(name1, name2):
+    if utility.compareByVisuallySimilarChars(name1, name2):
+        total += 0.9
     
     utility.compareByKeyboardDistance(name1, name2)
 
-    utility.levenshtein(name1, name2)
+    levDistance = utility.levenshtein(name1, name2)
+    levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
+    total += levConfidence
+    return min(total,1)
 
 def calculateMiddleIConfidence(middle1, middle2):
     return 0
 
-def calculateDOBConfidence(DOB1, DOB2):
-    return 0
+def calculateDOBConfidence(dob1, dob2):
+    distance = utility.levenshtein(dob1, dob2)
+    confidence = 1/pow(distance+1,0.5*distance)
+    return confidence
 
 def calculateSexConfidence(sex1, sex2):
     try:
@@ -66,6 +71,8 @@ def calculateSexConfidence(sex1, sex2):
 def calculateStreetConfidence(street1, street2):
     street1 = street1.split(' ')
     street2 = street2.split(' ')
+
+    #convert street abbreviations to fully spelled out
     try:
         street1[-1] = dictionaries.streets[street1[-1]]
     except KeyError:
@@ -75,6 +82,10 @@ def calculateStreetConfidence(street1, street2):
     except KeyError:
         pass
     
+    #levenshtein
+    #double metaphone
+    #shortened versions
+
     return 0
 
 def calculateCityConfidence(city1, city2):
@@ -83,10 +94,10 @@ def calculateCityConfidence(city1, city2):
     #levenshtein
     distance = utility.levenshtein(city1, city2)
 
-    dmetascore = 0
+    dmetaScore = 0
     #double metaphone
     if utility.compareDoubleMetaphone(city1, city2):
-        dmetascore = 0.8
+        dmetaScore = 0.5
 
     #calculate abbreviations
     abbreviationScore = 0
@@ -97,9 +108,9 @@ def calculateCityConfidence(city1, city2):
     elif utility.compareByContains(city1,city2):
         shortenedScore = (min(len(city1),len(city2)))/max(len(city1),len(city2))
 
-    confidence = min(1/(pow(distance+1, distance+1)) + abbreviationScore + shortenedScore, 1)
+    confidence = min(1/(pow(distance+1, distance+1)) + dmetaScore + abbreviationScore + shortenedScore, 1)
     return confidence
-calculateCityConfidence("George", "Sarah")
+
 #typos on abbreviations really screw this up   
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
@@ -125,10 +136,12 @@ def calculateZipConfidence(zip1, zip2):
     confidence = 1/(pow(distance+1, distance))
     return confidence
 
+
 def getConfidenceScore(row1, row2):
     row1 = [x.lower() for x in row1]
     row2 = [x.lower() for x in row2]
 
+    #use dictionary in case their columns are messed up
     PAN = calculatePatientAcctNumConfidence(row1[2], row2[2])
     CN = calculateNameConfidence(row1[3], row1[5], row2[3], row2[5])
     CMI = calculateMiddleIConfidence(row1[4], row2[4])

@@ -57,9 +57,6 @@ def removeSpecialCharsFromWord(word):
 def compareByAbbrevWord(word1, word2):
 	return abbrevWord(word1) == word2 or word1 == abbrevWord(word2)
 
-def compareByCommonMisspells(name1, name2):
-        return False
-
 def compareByVisuallySimilarChars(word1, word2):
 	# rn and m. deal with it. cant go char by char
 	for i,j in word1,word2:
