@@ -31,7 +31,7 @@ def compareDoubleMetaphones(name1DM, name2DM):
 def compareSentDoubleMetaphones(sent1DM, sent2DM):
 	#TODO: format first
 	for i,j in zip(sent1DM, sent2DM):
-		if not compareDoubleMetaphones(i, j)
+		if not compareDoubleMetaphones(i, j):
 			return False
 	return True
 
@@ -115,6 +115,10 @@ def abbrevSentence(sentence):
 
 def abbrevWord(word):
 	return word[0]
+
+def doubleMetaphone(word):
+    dmeta = fuzzy.DMetaphone(4)
+    return dmeta(word)[0]
 
 def compareByDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone(4)

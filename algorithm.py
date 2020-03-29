@@ -61,6 +61,7 @@ def start():
         "  `Previous City Abbrev` varchar(15) NOT NULL,"
         "  `Previous City DMeta` varchar(30) NOT NULL)"
     )
+
     try:
         cursor.execute(TABLE['createAdaptedTable'])
     except mysql.connector.Error as err:
@@ -75,7 +76,6 @@ def start():
     cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
     count = cursor.fetchone()[0]
 
-    #19
     #insert into rows
     INSERT = {}
     RETRIEVE = {}
@@ -87,26 +87,48 @@ def start():
         row = cursor.fetchone()[2:-1]
         insertValues = []
 
-        for i in range(2,len(row)+1):
-            newData = utility.removeSpecialCharsFromWord(row[i])
-            newData = newData.strip()
+        #add columns into new table 
+        for i in range(2,len(row)):
+            newData = row[i].strip()
             newData = newData.lower()
-            #is on gender
+            #is on sex
             if i == 5:
                 try: 
-                    newData = dictionaries[newData]
+                    newData = dictionaries.sex[newData]
                 except KeyError:
                     pass
             #is on streets
             elif i == 6 or i == 7 or i == 14 or i == 15:
                 temp = newData.split(' ')
-                temp[-1] = dictionaries.streets[temp[-1]]
-                newData = ''.join(temp)
+                try:
+                    temp[-1] = dictionaries.streets[temp[-1]]
+                except KeyError:
+                    pass
+                newData = ''.join([str(elem) for elem in temp])
+            #is on state
+            elif i == 9:
+                try:
+                    newData = dictionaries.states[newData]
+                except KeyError:
+                    pass
+            newData = utility.removeSpecialCharsFromWord(row[i])
+            insertValues.append(newData)
+        
+        #add special columns
+        row = row[1:-1]
+        print(row)
 
+        #firstNameDMeta
+        insertValues.append(utility.doubleMetaphone(row[0]))
+
+        formatted = "'" + "', '".join(insertValues) + "'"
         INSERT['insertData'] = (
             "INSERT INTO AdaptedData "
-            "VALUES ("
+            "VALUES (" + formatted + ");"
         )
+        cursor.execute(INSERT['insertData'])
+
+
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     if patientAcctNum1 == "" or patientAcctNum2 == "":
         return 0
@@ -395,8 +417,7 @@ def getConfidenceScore(row1, row2):
     return score
 
 def groupByConfidenceScore(cursor, confidenceThreshold):
-    retTable =
-    '''
+    retTable ='''
     CREATE TABLE Return LIKE Data;
     INSERT INTO Return SELECT * FROM Data;
     ALTER TABLE Return ADD GroupID datatype;
