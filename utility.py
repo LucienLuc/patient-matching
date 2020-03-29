@@ -11,6 +11,18 @@ import re
 # csv repo 1 = https://github.com/carltonnorthern/nickname-and-diminutive-names-lookup
 # csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
 
+
+def compareDoubleMetaphones(name1DM, name2DM):
+	return dmeta(word1)[0] == dmeta(word2)[0] or (dmeta(word1)[1] == dmeta(word2)[1] != None and
+        dmeta(word1)[1] == dmeta(word2)[1])
+
+def compareSentDoubleMetaphones(sent1DM, sent2DM):
+	#TODO: format first
+	    for i,j in zip(sent1DM, sent2DM):
+			if not compareDoubleMetaphones(i, j)
+				return False
+		return True
+
 def getCSVContents(csvFilePath):
 	data = []
 	with open(csvFilePath) as f:
