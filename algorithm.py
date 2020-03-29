@@ -13,84 +13,92 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     confidence = 1/pow(distance+1,0.15*distance)
     return confidence
 
-def calculateFullNameConfidence(first1, last1, first2, last2):
+def calculateFullNameConfidence(first1, first1DM, last1, last1DM, first2, first2DM, last2, last2DM):
     if (first1 == '' or first2 == '') and (last1 != '' or last2 != ''):
-        return calculateNameConfidence(last1, last2)
+        return calculateNameConfidence(last1, last1DM, last2, last2DM)
     elif (first1 != '' or first2 != '') and (last1 == '' or last2 == ''):
-        return calculateNameConfidence(first1, first2)
+        return calculateNameConfidence(first1, first1DM, first2, first2DM)
     elif ((first1 == '' or first2 == '') and (last1 == '' or last2 == '')):
         return None
     else:
         total = 0
         if utility.compareFirstLastSwap(first1, last1, first2, last2):
             total += 0.2
-        total += calculateNameConfidence(first1, first2) * 0.3
-        total += calculateNameConfidence(last1, last2) * 0.5
+        total += calculateNameConfidence(first1, first1DM, first2, first2DM) * 0.3
+        total += calculateNameConfidence(last1, last1DM, last2, last2DM) * 0.5
         return total
 
-def calculateNameConfidence(name1, name2):
+def calculateNameConfidence(name1, name1DM, name2, name2DM):
     total = 0
 
-    if utility.compareByAbbrevWord(name1, name2):
-        total += 0.1
+    # if utility.compareByAbbrevWord(name1, name2):
+    #     total += 0.1
     
-    if utility.compareWordsWithoutSpecialChars(name1, name2):
+    # if utility.compareWordsWithoutSpecialChars(name1, name2):
+    #     return 1
+
+    # if utility.compareNameByNickname(name1, name2):
+    #     total += 0.35
+
+    if name1 == name2:
         return 1
-
-    if utility.compareNameByNickname(name1, name2):
-        total += 0.35
-
+    
     if utility.compareByContains(name1, name2):
-        total += 0.05
+        total += 0.2
     
-    if utility.compareByDoubleMetaphone(name1, name2):
-        total += 0.25
+    if utility.compareDoubleMetaphones(name1DM, name2DM):
+        total += 0.4
 
-    if utility.compareByVisuallySimilarChars(name1, name2):
-        return 1
+    # if utility.compareByVisuallySimilarChars(name1, name2):
+    #     return 1
     
     #CHANGE
-    manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
+    # manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
 
     levDistance = utility.levenshtein(name1, name2)
-    levConfidence = 1/(pow(levDistance+1,0.9*levDistance)) * 0.25
+    levConfidence = 1/(pow(levDistance+1,0.9*levDistance)) * 0.4
     total += levConfidence
     return total
 
-def calculateMiddleIConfidence(middle1, middle2):
+def calculateMiddleIConfidence(middle1, middle1AB, middle1DM, middle2, middle2AB, middle2DM):
     if middle1 == "" or middle2 == "":
         return None
     total = 0
 
-    if utility.compareByAbbrevWord(middle1, middle2):
-        total += 0.1
-    
-    if utility.compareWordsWithoutSpecialChars(middle1, middle2):
+    if middle1 == middle2:
         return 1
 
-    if utility.compareNameByNickname(middle1, middle2):
-        total += 0.35
+    if middle1AB == middle2 or middle2AB == middle1:
+        total += 0.15
+    
+    # if utility.compareWordsWithoutSpecialChars(middle1, middle2):
+    #     return 1
+
+    # if utility.compareNameByNickname(middle1, middle2):
+    #     total += 0.35
     
     if utility.compareByContains(middle1, middle2):
-        total += 0.05
+        total += 0.15
     
-    if utility.compareByDoubleMetaphone(middle1, middle2):
-        total += 0.25
+    if utility.compareDoubleMetaphones(middle1DM, middle2DM):
+        total += 0.35
 
-    if utility.compareByVisuallySimilarChars(middle1, middle2):
-        return 1
+    # if utility.compareByVisuallySimilarChars(middle1, middle2):
+    #     return 1
     
     #change
-    manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
+    # manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
 
     levDistance = utility.levenshtein(middle1, middle2)
-    levConfidence = 1/(pow(levDistance+1,0.2*levDistance)) * .25
+    levConfidence = 1/(pow(levDistance+1,0.2*levDistance)) * .35
     total += levConfidence
     return total
 
 def calculateDOBConfidence(dob1, dob2):
     if dob1 == "" or dob2 == "":
         return None
+    if dob1 == dob2:
+        return 1
     distance = utility.levenshtein(dob1, dob2)
     confidence = 1/pow(distance+1,0.5*distance)
     return confidence
@@ -98,77 +106,81 @@ def calculateDOBConfidence(dob1, dob2):
 def calculateSexConfidence(sex1, sex2):
     if sex1 == "" or sex2 == "":
         return None
-    try:
-        sex1 = dictionaries.sex[sex1]
-    except KeyError:
-        pass
-    try:
-        sex2 = dictionaries.sex[sex2]
-    except KeyError:
-        pass
+    # try:
+    #     sex1 = dictionaries.sex[sex1]
+    # except KeyError:
+    #     pass
+    # try:
+    #     sex2 = dictionaries.sex[sex2]
+    # except KeyError:
+    #     pass
+    if sex1 == sex2:
+        return 1
+    if len(sex1) != len(sex2):
+        return 0
     distance = utility.levenshtein(sex1, sex2)
     confidence = 1/(pow(distance+1, distance))
     return confidence
 
-def calculateStreetConfidence(street1, street2):
+def calculateStreetConfidence(street1, street1DM, street2, street2DM):
     if street1 == "" or street2 == "":
         return None
-    street1 = street1.split(' ')
-    street2 = street2.split(' ')
+    # street1 = street1.split(' ')
+    # street2 = street2.split(' ')
 
     #convert street abbreviations to fully spelled out
-    try:
-        street1[-1] = dictionaries.streets[street1[-1]]
-    except KeyError:
-        pass
-    try: 
-         street2[-1] = dictionaries.streets[street2[-1]]
-    except KeyError:
-        pass
+    # try:
+    #     street1[-1] = dictionaries.streets[street1[-1]]
+    # except KeyError:
+    #     pass
+    # try: 
+    #      street2[-1] = dictionaries.streets[street2[-1]]
+    # except KeyError:
+    #     pass
     
     if street1 == street2:
         return 1
-    
+    total = 0
+    if utility.compareSentDoubleMetaphones(street1DM, street2DM):
+            total += 0.5
     #double metaphone for each word
-    for elem1, elem2 in zip(street1, street2):
-        if elem1 == None or elem2 == None:
-            break
-        if utility.compareByDoubleMetaphone(elem1,elem2):
-            metaphoneConfidence = 1/(max(len(street1),len(street2)))
-    
-    street1 = ' '.join(str(elem) for elem in street1)
-    street2 = ' '.join(str(elem) for elem in street2)
+   
+    # street1 = ' '.join(str(elem) for elem in street1)
+    # street2 = ' '.join(str(elem) for elem in street2)
 
     #levenshtein
     distance = utility.levenshtein(street1, street2)
-    levenshteinConfidence = 1/(pow(distance+1,0.2*distance))
+    total += 1/(pow(distance+1,0.2*distance)) * 0.5
 
-    return metaphoneConfidence * 0.5 + levenshteinConfidence * 0.5
+    return total
 
-def calculateCityConfidence(city1, city2):
+def calculateCityConfidence(city1, city1AB, city1DM, city2, city2AB, city2DM):
     if city1 == "" or city2 == "":
         return None
     #calculate two fully spelled out cities
     #levenshtein
     else:
+        total = 0
+        if city1 == city2:
+            return 1
         distance = utility.levenshtein(city1, city2)
+        levConfidence = 1/(pow(distance+1, distance+1)) * 0.3
 
-        dmetaScore = 0
     #double metaphone
-        if utility.compareByDoubleMetaphone(city1, city2):
-            dmetaScore = 0.5
+        if utility.compareSentDoubleMetaphones(city1DM, city2DM):
+            total += 0.5
 
     #calculate abbreviations
-        abbreviationScore = 0
-        shortenedScore = 0
-        if utility.compareByAbbrevSentence(city1, city2):
-            abbreviationScore = (min(len(city1),len(city2)))/5
+        # abbreviationScore = 0
+        # shortenedScore = 0
+        # if utility.compareByAbbrevSentence(city1, city2):
+        #     abbreviationScore = (min(len(city1),len(city2)))/5
     #calculate shortened versions (if abbreviated skip)
-        elif utility.compareByContains(city1,city2):
-            shortenedScore = (min(len(city1),len(city2)))/max(len(city1),len(city2))
-
-        confidence = min(1/(pow(distance+1, distance+1)) + dmetaScore + abbreviationScore + shortenedScore, 1)
-        return confidence
+        if city1 == city2AB or city1AB == city2:
+            total += 0.1
+        if utility.compareByContains(city1,city2):
+            total += 0.1
+        return total
 
 #typos on abbreviations really screw this up   
 def calculateStateConfidence(state1, state2):
@@ -176,14 +188,16 @@ def calculateStateConfidence(state1, state2):
     if state1 == "" or state2 == "":
         return None
     else:
-        try: 
-            state1 = dictionaries.states[state1]
-        except KeyError:
-            pass
-        try:
-            state2 = dictionaries.states[state2]
-        except KeyError:
-            pass
+        # try: 
+        #     state1 = dictionaries.states[state1]
+        # except KeyError:
+        #     pass
+        # try:
+        #     state2 = dictionaries.states[state2]
+        # except KeyError:
+        #     pass
+        if state1 == state2:
+            return 1
         distance = utility.levenshtein(state1, state2)
         confidence = 1/(distance+1)
         return confidence
@@ -192,6 +206,8 @@ def calculateZipConfidence(zip1, zip2):
     if zip1 == "" or zip2 == "":
         return None
     else:
+        if zip1 == zip2:
+            return 1
         distance = utility.levenshtein(zip1, zip2) 
     # distance -> confidence
     #0 -> 1
@@ -203,10 +219,10 @@ def calculateZipConfidence(zip1, zip2):
 
 
 def getConfidenceScore(row1, row2):
-    row1 = [x.lower() for x in row1]
-    row2 = [x.lower() for x in row2]
-    row1 = [x.strip() for x in row1]
-    row2 = [x.strip() for x in row2]
+    # row1 = [x.lower() for x in row1]
+    # row2 = [x.lower() for x in row2]
+    # row1 = [x.strip() for x in row1]
+    # row2 = [x.strip() for x in row2]
 
     #print(row1)
     #print(row2)
@@ -275,8 +291,8 @@ def getConfidenceScore(row1, row2):
     print("Total confidence: " + str(score))
     return score
 
-def groupByConfidenceScore(data, confidenceThreshold):
-    alreadyAddedList = []
+def groupByConfidenceScore(cursor, confidenceThreshold):
+    alreadyAddedList = [] #store patient ids in here
     result = []
     for row1 in data:
         if row1 in alreadyAddedList:
