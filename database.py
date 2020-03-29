@@ -20,8 +20,8 @@ if __name__ == "__main__":
 
     TABLE['Test'] = (
         "CREATE TABLE IF NOT EXISTS `Data` ("
-        "  `GroupID` varchar(30) NOT NULL,"
-        "  `PatientID` varchar(30) NOT NULL,"
+        "  `GroupID` int NOT NULL,"
+        "  `PatientID` int NOT NULL,"
         "  `Patient Acct #` varchar(30) NOT NULL,"
         "  `First Name` varchar(30) NOT NULL,"
         "  `MI` varchar(10) DEFAULT NULL,"
@@ -61,9 +61,9 @@ if __name__ == "__main__":
         "INSERT INTO Data " 
         "VALUES (" + values + ");"
         )
-        print(insert_into_table)
+        #print(insert_into_table)
         cursor.execute(insert_into_table)
-        cnx.commit()
-
+    
+    cnx.commit()
     cursor.close()
     cnx.close()

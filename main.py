@@ -1,11 +1,19 @@
 import algorithm
-import csv
+import sys
+import mysql.connector
+from mysql.connector import errorcode
+#how do we know their table name
+def main():
+    args = []
+    for arg in sys.argv:
+        args.append(arg)
+    '''
+    if len(args) != 2:
+        print("Invalid Arguments")
+        print("Usage: python main.py <path-to-mysql database>")
+        exit()
+    '''
+    algorithm.start()
 
-data = []
-with open("Patient Matching Data.csv") as f:
-    reader = csv.reader(f)
-    for row in reader:
-        data.append(row)
-
-data = data[1:-1]
-algorithm.groupByConfidenceScore(data,0.8)
+if __name__ == "__main__":
+    main()

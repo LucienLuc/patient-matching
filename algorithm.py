@@ -1,11 +1,112 @@
-import csv
-
 import utility
 import dictionaries
-#import database
+import mysql.connector
+from mysql.connector import errorcode
 
+#import database
 #assume all strings all lower
 
+#elongate all abbreviaions (rd to road, CA to california, M to male)
+#remove all special chars
+#lowercase all
+#remove trailing and leading whitespace
+def start():
+    try:
+        cnx = mysql.connector.connect(user='mVlV7hcyfk', password='SXunDqvhY5',
+                                host='remotemysql.com',
+                                database='mVlV7hcyfk')
+        cursor = cnx.cursor()
+    except:
+        print("Error")
+        exit()
+    
+    #Creates AdaptedTable
+    TABLE = {}
+    TABLE['createAdaptedTable'] = (
+        "CREATE TABLE IF NOT EXISTS `AdaptedData` ("
+        "  `Patient Acct #` varchar(30) NOT NULL,"
+        "  `First Name` varchar(30) NOT NULL,"
+        "  `Full MI` varchar(15) NOT NULL,"
+        "  `Last Name` varchar(30) NOT NULL,"
+        "  `Date of Birth` varchar(15) NOT NULL,"
+        "  `Sex` varchar(10) NOT NULL, "
+        "  `Current Street 1` varchar(50) NOT NULL,"
+        "  `Current Street 2` varchar(50) NOT NULL,"
+        "  `Current City` varchar(30) NOT NULL,"
+        "  `Current State` varchar(30) NOT NULL,"
+        "  `Current Zipcode` varchar(10) NOT NULL,"
+        "  `Previous First Name` varchar(30) NOT NULL,"
+        "  `Previous Full MI` varchar(10) NOT NULL,"
+        "  `Previous Last Name` varchar(30) NOT NULL,"
+        "  `Previous Street 1` varchar(50) NOT NULL,"
+        "  `Previous Street 2` varchar(50) NOT NULL,"
+        "  `Previous City` varchar(30) NOT NULL,"
+        "  `Previous State` varchar(30) NOT NULL,"
+        "  `Previous Zipcode` varchar(10) NOT NULL,"
+
+        "  `First Name DMeta` varchar(15) NOT NULL,"
+        "  `True MI` varchar(1) NOT NULL,"
+        "  `MI DMeta` varchar(15) NOT NULL,"
+        "  `Last Name DMeta` varchar(15) NOT NULL,"
+        "  `Current Street 1 DMeta` varchar(50) NOT NULL,"
+        "  `Current Street 2 DMeta` varchar(50) NOT NULL,"
+        "  `Current City Abbrev` varchar(15) NOT NULL,"
+        "  `Current City DMeta` varchar(30) NOT NULL,"
+        "  `Previous First Name DMeta` varchar(30) NOT NULL,"
+        "  `Previous True MI` varchar(10) NOT NULL,"
+        "  `Previous MI DMeta` varchar(10) NOT NULL,"
+        "  `Previous Last Name DMeta` varchar(30) NOT NULL,"
+        "  `Previous Street 1 DMeta` varchar(50) NOT NULL,"
+        "  `Previous Street 2 DMeta` varchar(50) NOT NULL,"
+        "  `Previous City Abbrev` varchar(15) NOT NULL,"
+        "  `Previous City DMeta` varchar(30) NOT NULL)"
+    )
+    try:
+        cursor.execute(TABLE['createAdaptedTable'])
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists.")
+        else: 
+            print(err.msg)
+    else:
+        print("OK")
+    
+    #Find number of rows
+    cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
+    count = cursor.fetchone()[0]
+
+    #19
+    #insert into rows
+    INSERT = {}
+    RETRIEVE = {}
+    for i in range(1,count+1):
+        RETRIEVE['retrieve'] = (
+            "SELECT * from `Data` WHERE PatientID=" + str(i)
+        )
+        cursor.execute(RETRIEVE['retrieve'])
+        row = cursor.fetchone()[2:-1]
+        insertValues = []
+
+        for i in range(2,len(row)+1):
+            newData = utility.removeSpecialCharsFromWord(row[i])
+            newData = newData.strip()
+            newData = newData.lower()
+            #is on gender
+            if i == 5:
+                try: 
+                    newData = dictionaries[newData]
+                except KeyError:
+                    pass
+            #is on streets
+            elif i == 6 or i == 7 or i == 14 or i == 15:
+                temp = newData.split(' ')
+                temp[-1] = dictionaries.streets[temp[-1]]
+                newData = ''.join(temp)
+
+        INSERT['insertData'] = (
+            "INSERT INTO AdaptedData "
+            "VALUES ("
+        )
 def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     if patientAcctNum1 == "" or patientAcctNum2 == "":
         return 0
@@ -14,9 +115,9 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     return confidence
 
 def calculateFullNameConfidence(first1, last1, first2, last2):
-    if (first1 == '' or first2 == '') and (last1 != '' or last2 != ''):
+    if (first1 == '' or first2 == '') and (last1 != '' and last2 != ''):
         return calculateNameConfidence(last1, last2)
-    elif (first1 != '' or first2 != '') and (last1 == '' or last2 == ''):
+    elif (first1 != '' and first2 != '') and (last1 == '' or last2 == ''):
         return calculateNameConfidence(first1, first2)
     elif ((first1 == '' or first2 == '') and (last1 == '' or last2 == '')):
         return None
@@ -36,22 +137,22 @@ def calculateNameConfidence(name1, name2):
     
     if utility.compareWordsWithoutSpecialChars(name1, name2):
         return 1
-
+    '''
     if utility.compareNameByNickname(name1, name2):
         total += 0.35
-
+    '''
     if utility.compareByContains(name1, name2):
         total += 0.05
     
     if utility.compareByDoubleMetaphone(name1, name2):
         total += 0.25
-
+    '''
     if utility.compareByVisuallySimilarChars(name1, name2):
         return 1
-    
-    #CHANGE
+    '''
+    '''
     manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
-
+    '''
     levDistance = utility.levenshtein(name1, name2)
     levConfidence = 1/(pow(levDistance+1,0.9*levDistance)) * 0.25
     total += levConfidence
@@ -67,19 +168,19 @@ def calculateMiddleIConfidence(middle1, middle2):
     
     if utility.compareWordsWithoutSpecialChars(middle1, middle2):
         return 1
-
+    '''
     if utility.compareNameByNickname(middle1, middle2):
         total += 0.35
-    
+    '''
     if utility.compareByContains(middle1, middle2):
         total += 0.05
     
     if utility.compareByDoubleMetaphone(middle1, middle2):
         total += 0.25
-
+    '''
     if utility.compareByVisuallySimilarChars(middle1, middle2):
         return 1
-    
+    '''
     #change
     manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
 
@@ -130,11 +231,12 @@ def calculateStreetConfidence(street1, street2):
         return 1
     
     #double metaphone for each word
+    metaphoneConfidence = 0
     for elem1, elem2 in zip(street1, street2):
         if elem1 == None or elem2 == None:
             break
         if utility.compareByDoubleMetaphone(elem1,elem2):
-            metaphoneConfidence = 1/(max(len(street1),len(street2)))
+            metaphoneConfidence += 1/(max(len(street1),len(street2)))
     
     street1 = ' '.join(str(elem) for elem in street1)
     street2 = ' '.join(str(elem) for elem in street2)
@@ -234,7 +336,7 @@ def getConfidenceScore(row1, row2):
     CN = calculateFullNameConfidence(row1[3], row1[5], row2[3], row2[5])
     CMI = calculateMiddleIConfidence(row1[4], row2[4])
     DOB = calculateDOBConfidence(row1[6], row2[6])
-    S = calculateSexConfidence(row1[7], row2[7]) 
+    S = calculateSexConfidence(row1[7], row2[7])
     CS1 = calculateStreetConfidence(row1[8], row2[8]) 
     CS2 = calculateStreetConfidence(row1[9], row2[9])
     CC = calculateCityConfidence(row1[10], row2[10])
@@ -252,15 +354,16 @@ def getConfidenceScore(row1, row2):
     confidenceScores = [PAN,CN,CMI,DOB,S,CS1,CS2,CC,CS,CZ,PN,PMI,PS1,PS2,PC,PS,PZ]
     weights = [PAN_WEIGHT,CN_WEIGHT,CMI_WEIGHT,DOB_WEIGHT,S_WEIGHT,CS1_WEIGHT,CS2_WEIGHT,CC_WEIGHT,CS_WEIGHT,CZ_WEIGHT,
                 PN_WEIGHT,PMI_WEIGHT,PS1_WEIGHT,PS2_WEIGHT,PC_WEIGHT,PS_WEIGHT,PZ_WEIGHT]
-
     newFactor = 0
+    
     for score,weight in zip(confidenceScores, weights):
-        if score is None:
+        if score is not None:
             newFactor += weight
 
     if newFactor == 0:
         newFactor = 1
 
+    count = 0
     newConfidenceScores = []
     for score,weight in zip(confidenceScores, weights):
         if score is None:
@@ -272,7 +375,7 @@ def getConfidenceScore(row1, row2):
     for s in newConfidenceScores:
         score += s
 
-    print("Total confidence: " + str(score))
+    #print("Total confidence: " + str(score))
     return score
 
 def groupByConfidenceScore(data, confidenceThreshold):

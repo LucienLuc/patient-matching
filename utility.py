@@ -101,3 +101,19 @@ def compareByDoubleMetaphone(word1, word2):
 
 def levenshtein(string1, string2):
     return Levenshtein.distance(string1,string2)
+
+'''
+SLOW: 
+compareByDoubleMetaPhone
+removeSpecialChars
+compareWordsByKeyboardDistance
+compareWordsWithoutSpecialChars
+getConfidenceScore
+groupByConfidenceScore
+calculateFullName
+calculateCityConfidence
+
+if name and street is exactly the same, skip other confidence calls
+convert everything to double metaphone array one time
+if it is garbage comparison, abort
+'''
