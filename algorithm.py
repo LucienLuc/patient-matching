@@ -232,19 +232,22 @@ def getConfidenceScore(row1, row2):
 def groupByConfidenceScore(data, confidenceThreshold):
     alreadyAddedList = []
     result = []
+    print('data' + str(len(data)))
+    print('data[0]' + str(len(data[0])))
     for row1 in data:
+        if row1 in alreadyAddedList:
+            continue;
         group = [row1]
         alreadyAddedList.append(row1)
         for row2 in data:
             if row2 not in alreadyAddedList:
                 if getConfidenceScore(row1, row2) >= confidenceThreshold:
                     group.append(row2)
-        result.add(group)
+                    alreadyAddedList.append(row2)
+        print(len(alreadyAddedList))
+        # print(group)
+        result.append(group)
     # return an array of groups
-    for group in result:
-        print("group: ")
-        for person in group:
-            print(person[1] + ", ")
     return result
 
 
