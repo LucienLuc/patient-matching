@@ -20,7 +20,7 @@ def getCSVContents(csvFilePath):
 
 def compareWordsByKeyboardDistance(word1, word2):
 	total = 0
-	for i,j in word1,word2:
+	for i,j in zip(word1,word2):
 		x1 = dictionaries.keyboard_cartesian[i][x]
 		y1 = dictionaries.keyboard_cartesian[i][y]
 		x2 = dictionaries.keyboard_cartesian[j][x]
@@ -30,21 +30,6 @@ def compareWordsByKeyboardDistance(word1, word2):
 	
 def manhattanDistance(x1, y1, x2, y2):
 	return abs(x2 - x1) + abs(y2 - y1)
-
-'''
-def euclidean_distance(a,b):
-    X = (keyboard_cartesian[a]['x'] - keyboard_cartesian[b]['x'])**2
-    Y = (keyboard_cartesian[a]['y'] - keyboard_cartesian[b]['y'])**2
-    return math.sqrt(X+Y)
-     
-     
-for i in keyboard_cartesian.keys():
-    for j in keyboard_cartesian.keys():
-        distance_from_i_to_j = [(i, j, euclidean_distance(i, j))]
-'''
-
-
-
 
 def removeNumbersFromWord(word):
     return ''.join([i for i in word if not i.isdigit()])
@@ -85,7 +70,7 @@ def compareByAbbrevWord(word1, word2):
 
 def compareByVisuallySimilarChars(word1, word2):
 	# rn and m. deal with it. cant go char by char
-	for i,j in word1,word2:
+	for i,j in zip(word1,word2):
 		if not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or dictionaries.similarChars[i] in dictionaries.similarChars[j] or i==j:
 			return False
 	return True
