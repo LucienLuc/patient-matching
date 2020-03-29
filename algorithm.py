@@ -79,7 +79,6 @@ def calculateMiddleIConfidence(middle1, middle2):
     levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
     total += levConfidence
     return min(total,1)
-    return 1
 
 def calculateDOBConfidence(dob1, dob2):
     if dob1 == "" or dob2 == "":
@@ -129,14 +128,12 @@ def calculateStreetConfidence(street1, street2):
             break
         if utility.compareByDoubleMetaphone(elem1,elem2):
             total += 1/(max(len(street1),len(street2)))
-    print("total after dmeta:" + str(total))
     street1 = ' '.join(str(elem) for elem in street1)
     street2 = ' '.join(str(elem) for elem in street2)
 
     #levenshtein
     distance = utility.levenshtein(street1, street2)
     confidence = 1/(pow(distance+1,0.2*distance))
-    print("levenshtein: " + str(confidence))
     total += confidence
 
     #shortened versions
@@ -206,40 +203,70 @@ def getConfidenceScore(row1, row2):
     row1 = [x.strip() for x in row1]
     row2 = [x.strip() for x in row2]
 
-    print(row1)
-    print(row2)
-    #use dictionary in case their columns are messed up
-    notBlankCount = 0
-    for elem1, elem2 in zip(row1, row2):
-        if elem1 != "" or elem2 != "":
-            notBlankCount += 1
-    PAN = calculatePatientAcctNumConfidence(row1[2], row2[2]) * 0.01
-    print(PAN)
-    CN = calculateFullNameConfidence(row1[3], row1[5], row2[3], row2[5]) * 0.075
-    print(CN)
-    CMI = calculateMiddleIConfidence(row1[4], row2[4]) * 0.01
-    print(CMI)
-    DOB = calculateDOBConfidence(row1[6], row2[6]) * 0.02
-    print(DOB)
-    S = calculateSexConfidence(row1[7], row2[7]) * 0.04
-    print(S)
-    CS1 = calculateStreetConfidence(row1[8], row2[8]) * 0.2
-    print(CS1)
-    CS2 = calculateStreetConfidence(row1[9], row2[9]) * 0.01
-    CC = calculateCityConfidence(row1[10], row2[10]) * 0.07
-    CS = calculateStateConfidence(row1[11], row2[11]) * 0.07
-    CZ = calculateZipConfidence(row1[12], row2[12]) * 0.03
+    #print(row1)
+    #print(row2)
+    PAN_WEIGHT = 0.01
+    CN_WEIGHT = 0.075
+    CMI_WEIGHT = 0.01
+    DOB_WEIGHT = 0.02
+    S_WEIGHT = 0.04
+    CS1_WEIGHT = 0.2
+    CS2_WEIGHT = 0.01
+    CC_WEIGHT = 0.07
+    CS_WEIGHT = 0.07
+    CZ_WEIGHT = 0.03
+    PN_WEIGHT = 0.075
+    PMI_WEIGHT = 0.01
+    PS1_WEIGHT = 0.2
+    PS2_WEIGHT = 0.01
+    PC_WEIGHT = 0.07
+    PS_WEIGHT = 0.07
+    PZ_WEIGHT = 0.03
 
-    PN = calculateFullNameConfidence(row1[13], row1[15], row2[13], row2[15]) * 0.075
-    PMI = calculateMiddleIConfidence(row1[14], row2[14]) * 0.01
-    PS1 = calculateStreetConfidence(row1[16], row2[16]) * 0.2
-    PS2 = calculateStreetConfidence(row1[17], row2[17]) * 0.01
-    PC = calculateCityConfidence(row1[18], row2[18]) * 0.07
-    PS = calculateStateConfidence(row1[19], row2[19]) * 0.07
-    PZ = calculateZipConfidence(row1[20], row2[20]) * 0.03
+
+    #use dictionary in case their columns are messed up
+    PAN = calculatePatientAcctNumConfidence(row1[2], row2[2])
+    CN = calculateFullNameConfidence(row1[3], row1[5], row2[3], row2[5])
+    CMI = calculateMiddleIConfidence(row1[4], row2[4])
+    DOB = calculateDOBConfidence(row1[6], row2[6])
+    S = calculateSexConfidence(row1[7], row2[7]) 
+    CS1 = calculateStreetConfidence(row1[8], row2[8]) 
+    CS2 = calculateStreetConfidence(row1[9], row2[9])
+    CC = calculateCityConfidence(row1[10], row2[10])
+    CS = calculateStateConfidence(row1[11], row2[11])
+    CZ = calculateZipConfidence(row1[12], row2[12])
+
+    PN = calculateFullNameConfidence(row1[13], row1[15], row2[13], row2[15])
+    PMI = calculateMiddleIConfidence(row1[14], row2[14])
+    PS1 = calculateStreetConfidence(row1[16], row2[16])
+    PS2 = calculateStreetConfidence(row1[17], row2[17])
+    PC = calculateCityConfidence(row1[18], row2[18])
+    PS = calculateStateConfidence(row1[19], row2[19])
+    PZ = calculateZipConfidence(row1[20], row2[20])
+
+    confidenceScores = [PAN,CN,CMI,DOB,S,CS1,CS2,CC,CS,CZ,PN,PMI,PS1,PS2,PC,PS,PZ]
+    weights = [PAN_WEIGHT,CN_WEIGHT,CMI_WEIGHT,DOB_WEIGHT,S_WEIGHT,CS1_WEIGHT,CS2_WEIGHT,CC_WEIGHT,CS_WEIGHT,CZ_WEIGHT,
+                PN_WEIGHT,PMI_WEIGHT,PS1_WEIGHT,PS2_WEIGHT,PC_WEIGHT,PS_WEIGHT,PZ_WEIGHT]
+
+    newFactor = 0
+    for score,weight in zip(confidenceScores, weights):
+        if score is None:
+            newFactor += weight
+
+    if newFactor == 0:
+        newFactor = 1
+
+    newConfidenceScores = []
+    for score,weight in zip(confidenceScores, weights):
+        if score is None:
+            newConfidenceScores.append(0)
+        else:
+            newConfidenceScores.append(score * weight/newFactor)
     
-    score = (PAN + CN + CMI + DOB + S + CS1 + CS2 + CC + CS + CZ + PN + PMI + PS1 + PS2 + PC + PS + PZ)
-    print(score)
+    score = 0
+    for s in confidenceScores:
+        score += s
+    print("Total confidence: " + str(score))
     return score
 
 def groupByConfidenceScore(data, confidenceThreshold):
@@ -255,7 +282,7 @@ def groupByConfidenceScore(data, confidenceThreshold):
                 if getConfidenceScore(row1, row2) >= confidenceThreshold:
                     group.append(row2)
                     alreadyAddedList.append(row2)
-                exit()
+                #exit()
         print(len(group))
         # print(group)
         result.append(group)
