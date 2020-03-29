@@ -48,7 +48,7 @@ def calculateNameConfidence(name1, name2):
     return min(total,1)
 
 def calculateMiddleIConfidence(middle1, middle2):
-    return 0
+    return 1
 
 def calculateDOBConfidence(dob1, dob2):
     distance = utility.levenshtein(dob1, dob2)
