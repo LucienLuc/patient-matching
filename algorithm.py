@@ -269,7 +269,7 @@ def getConfidenceScore(row1, row2):
             newConfidenceScores.append(score * weight/newFactor)
     
     score = 0
-    for s in confidenceScores:
+    for s in newConfidenceScores:
         score += s
 
     print("Total confidence: " + str(score))
