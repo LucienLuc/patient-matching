@@ -23,18 +23,15 @@ def calculateNameConfidence(name1, name2):
     total = 0
 
     if utility.compareByAbbrevWord(name1, name2):
-        total += 0.2
+        total += 0.9
     
     if utility.compareWordsWithoutSpecialChars(name1, name2):
         total += 0.9
 
-    if utility.compareNameByNickname(name1, name2):
-        total += 0.5
-    
     if utility.compareByContains(name1, name2):
         total += 0.6
     
-    if utility.doubleMetaphone(name1, name2):
+    if utility.compareByDoubleMetaphone(name1, name2):
         total += 0.8
 
     if utility.compareByVisuallySimilarChars(name1, name2):
@@ -43,11 +40,37 @@ def calculateNameConfidence(name1, name2):
     utility.compareByKeyboardDistance(name1, name2)
 
     levDistance = utility.levenshtein(name1, name2)
-    levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
+    levConfidence = 1/(pow(levDistance+1,0.9*levDistance))
     total += levConfidence
     return min(total,1)
 
 def calculateMiddleIConfidence(middle1, middle2):
+    total = 0
+
+    if utility.compareByAbbrevWord(middle1, middle2):
+        total += 0.2
+    
+    if utility.compareWordsWithoutSpecialChars(middle1, middle2):
+        total += 0.9
+
+    if utility.compareNameByNickname(middle1, middle2):
+        total += 0.5
+    
+    if utility.compareByContains(middle1, middle2):
+        total += 0.6
+    
+    if utility.compareByDoubleMetaphone(middle1, middle2):
+        total += 0.8
+
+    if utility.compareByVisuallySimilarChars(middle1, middle2):
+        total += 0.9
+    
+    utility.compareByKeyboardDistance(middle1, middle2)
+
+    levDistance = utility.levenshtein(middle1, middle2)
+    levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
+    total += levConfidence
+    return min(total,1)
     return 1
 
 def calculateDOBConfidence(dob1, dob2):
@@ -81,8 +104,12 @@ def calculateStreetConfidence(street1, street2):
          street2[-1] = dictionaries.streets[street2[-1]]
     except KeyError:
         pass
-    
+
+    street1 = ' '.join(str(elem) for elem in street1)
+    street2 = ' '.join(str(elem) for elem in street2)
     #levenshtein
+    distance = utility.levenshtein(street1, street2)
+    confidence = 1/(pow(distance+1,0.2*distance))
     #double metaphone
     #shortened versions
 
@@ -140,6 +167,8 @@ def calculateZipConfidence(zip1, zip2):
 def getConfidenceScore(row1, row2):
     row1 = [x.lower() for x in row1]
     row2 = [x.lower() for x in row2]
+    row1 = [x.strip() for x in row1]
+    row2 = [x.strip() for x in row2]
 
     #use dictionary in case their columns are messed up
     PAN = calculatePatientAcctNumConfidence(row1[2], row2[2])

@@ -19,8 +19,10 @@ def getCSVContents(csvFilePath):
 	return data
 
 def compareSentencesByKeyboardDistance(sentence1, sentence2):
-
+    return 0
+    
 def compareWordsByKeyboardDistance(word1, word2):
+    return 0
 
 def removeNumbersFromWord(word):
     return ''.join([i for i in word if not i.isdigit()])
@@ -78,7 +80,7 @@ def abbrevSentence(sentence):
 def abbrevWord(word):
 	return word[0]
 
-def compareDoubleMetaphone(word1, word2):
+def compareByDoubleMetaphone(word1, word2):
         dmeta = fuzzy.DMetaphone()
         return dmeta(word1[0]) == dmeta(word2[0]) or dmeta(word1[1]) == dmeta(word2[1])
 
