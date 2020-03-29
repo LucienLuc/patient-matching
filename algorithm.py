@@ -114,19 +114,11 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     confidence = 1/pow(distance+1,0.15*distance)
     return confidence
 
-<<<<<<< HEAD
-def calculateFullNameConfidence(first1, last1, first2, last2):
-    if (first1 == '' or first2 == '') and (last1 != '' and last2 != ''):
-        return calculateNameConfidence(last1, last2)
-    elif (first1 != '' and first2 != '') and (last1 == '' or last2 == ''):
-        return calculateNameConfidence(first1, first2)
-=======
 def calculateFullNameConfidence(first1, first1DM, last1, last1DM, first2, first2DM, last2, last2DM):
     if (first1 == '' or first2 == '') and (last1 != '' or last2 != ''):
         return calculateNameConfidence(last1, last1DM, last2, last2DM)
     elif (first1 != '' or first2 != '') and (last1 == '' or last2 == ''):
         return calculateNameConfidence(first1, first1DM, first2, first2DM)
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
     elif ((first1 == '' or first2 == '') and (last1 == '' or last2 == '')):
         return None
     else:
@@ -143,14 +135,6 @@ def calculateNameConfidence(name1, name1DM, name2, name2DM):
     # if utility.compareByAbbrevWord(name1, name2):
     #     total += 0.1
     
-<<<<<<< HEAD
-    if utility.compareWordsWithoutSpecialChars(name1, name2):
-        return 1
-    '''
-    if utility.compareNameByNickname(name1, name2):
-        total += 0.35
-    '''
-=======
     # if utility.compareWordsWithoutSpecialChars(name1, name2):
     #     return 1
 
@@ -160,21 +144,9 @@ def calculateNameConfidence(name1, name1DM, name2, name2DM):
     if name1 == name2:
         return 1
     
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
     if utility.compareByContains(name1, name2):
         total += 0.2
     
-<<<<<<< HEAD
-    if utility.compareByDoubleMetaphone(name1, name2):
-        total += 0.25
-    '''
-    if utility.compareByVisuallySimilarChars(name1, name2):
-        return 1
-    '''
-    '''
-    manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
-    '''
-=======
     if utility.compareDoubleMetaphones(name1DM, name2DM):
         total += 0.4
 
@@ -184,7 +156,6 @@ def calculateNameConfidence(name1, name1DM, name2, name2DM):
     #CHANGE
     # manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
 
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
     levDistance = utility.levenshtein(name1, name2)
     levConfidence = 1/(pow(levDistance+1,0.9*levDistance)) * 0.4
     total += levConfidence
@@ -197,12 +168,6 @@ def calculateMiddleIConfidence(middle1, middle1AB, middle1DM, middle2, middle2AB
 
     if middle1 == middle2:
         return 1
-<<<<<<< HEAD
-    '''
-    if utility.compareNameByNickname(middle1, middle2):
-        total += 0.35
-    '''
-=======
 
     if middle1AB == middle2 or middle2AB == middle1:
         total += 0.15
@@ -213,25 +178,15 @@ def calculateMiddleIConfidence(middle1, middle1AB, middle1DM, middle2, middle2AB
     # if utility.compareNameByNickname(middle1, middle2):
     #     total += 0.35
     
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
     if utility.compareByContains(middle1, middle2):
         total += 0.15
     
-<<<<<<< HEAD
-    if utility.compareByDoubleMetaphone(middle1, middle2):
-        total += 0.25
-    '''
-    if utility.compareByVisuallySimilarChars(middle1, middle2):
-        return 1
-    '''
-=======
     if utility.compareDoubleMetaphones(middle1DM, middle2DM):
         total += 0.35
 
     # if utility.compareByVisuallySimilarChars(middle1, middle2):
     #     return 1
     
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
     #change
     # manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
 
@@ -290,21 +245,9 @@ def calculateStreetConfidence(street1, street1DM, street2, street2DM):
     if utility.compareSentDoubleMetaphones(street1DM, street2DM):
             total += 0.5
     #double metaphone for each word
-<<<<<<< HEAD
-    metaphoneConfidence = 0
-    for elem1, elem2 in zip(street1, street2):
-        if elem1 == None or elem2 == None:
-            break
-        if utility.compareByDoubleMetaphone(elem1,elem2):
-            metaphoneConfidence += 1/(max(len(street1),len(street2)))
-    
-    street1 = ' '.join(str(elem) for elem in street1)
-    street2 = ' '.join(str(elem) for elem in street2)
-=======
    
     # street1 = ' '.join(str(elem) for elem in street1)
     # street2 = ' '.join(str(elem) for elem in street2)
->>>>>>> 115218e64726070ee93db28e74100bdf09dd0f36
 
     #levenshtein
     distance = utility.levenshtein(street1, street2)
@@ -451,22 +394,35 @@ def getConfidenceScore(row1, row2):
     return score
 
 def groupByConfidenceScore(cursor, confidenceThreshold):
-    alreadyAddedList = [] #store patient ids in here
-    result = []
-    for row1 in data:
+    retTable =
+    '''
+    CREATE TABLE Return LIKE Data;
+    INSERT INTO Return SELECT * FROM Data;
+    ALTER TABLE Return ADD GroupID datatype;
+    '''
+    cursor.execute(retTable)
+    alreadyAddedList = []
+    groupCount = 0
+    cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
+    count = cursor.fetchone()[0]
+    for i in range(1,count+1):
+        cursor.execute("SELECT * from `AdaptedData` WHERE PatientID=" + str(i))
+        row1 = cursor.fetchone()
         if row1 in alreadyAddedList:
             continue
-        group = [row1]
+        cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(i))
         alreadyAddedList.append(row1)
-        for row2 in data:
+        for j in range(1,count+1):
+            cursor.execute("SELECT * from `AdaptedData` WHERE PatientID=" + str(j))
+            row2 = cursor.fetchone()
             if row2 not in alreadyAddedList:
                 if getConfidenceScore(row1, row2) >= confidenceThreshold:
-                    group.append(row2)
+                    cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(j))
                     alreadyAddedList.append(row2)
                 #exit()
         print(len(group))
         # print(group)
-        result.append(group)
+        groupCount += 1
     # return an array of groups
     print(len(result))
     return result
