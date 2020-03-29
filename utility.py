@@ -28,8 +28,20 @@ def streetToDoubleMetaphone(street):
     return res
 
 def compareDoubleMetaphones(name1DM, name2DM):
-	return dmeta(word1)[0] == dmeta(word2)[0] or (dmeta(word1)[1] == dmeta(word2)[1] != None and
-        dmeta(word1)[1] == dmeta(word2)[1])
+	# format possibly
+	one = name1DM[0] == None or name2DM[0] == None
+	two = name1DM[0] == name2DM[0] and one
+	three = name2DM[1] != None and name1DM[0] != None and name1DM[0] == name2DM[1]
+	four = one and name2DM[1] != None and name1DM[1] != None and name1DM[1] == name2DM[1]
+	if one:
+		return False
+	if two:
+		return True
+	if three:
+		return True
+	if four:
+		return True
+	return False
 
 def compareSentDoubleMetaphones(sent1DM, sent2DM):
 	#TODO: format first
