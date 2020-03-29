@@ -92,6 +92,7 @@ def calculateSexConfidence(sex1, sex2):
     return confidence
 
 def calculateStreetConfidence(street1, street2):
+    total = 0
     street1 = street1.split(' ')
     street2 = street2.split(' ')
 
@@ -104,16 +105,30 @@ def calculateStreetConfidence(street1, street2):
          street2[-1] = dictionaries.streets[street2[-1]]
     except KeyError:
         pass
+    
+    if street1 == street2:
+        total += 1
+    
+    #double metaphone for each word
+    for elem1, elem2 in street1,street2:
+        if elem1 == elem2 == None:
+            break
+        if utility.compareByDoubleMetaphone(elem1,elem2):
+            total += 1/(max(len(street1),len(street2)))
 
     street1 = ' '.join(str(elem) for elem in street1)
     street2 = ' '.join(str(elem) for elem in street2)
+
     #levenshtein
     distance = utility.levenshtein(street1, street2)
     confidence = 1/(pow(distance+1,0.2*distance))
-    #double metaphone
+    total += confidence
+
     #shortened versions
 
-    return 0
+    return min(total, 1)
+
+print(calculateStreetConfidence('8178 Talismen Center', '8178 Talisman Center'))
 
 def calculateCityConfidence(city1, city2):
 

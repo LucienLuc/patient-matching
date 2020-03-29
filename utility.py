@@ -18,13 +18,6 @@ def getCSVContents(csvFilePath):
 			data.append(row)
 	return data
 
-<<<<<<< HEAD
-def compareSentencesByKeyboardDistance(sentence1, sentence2):
-    return 0
-    
-def compareWordsByKeyboardDistance(word1, word2):
-    return 0
-=======
 def compareWordsByKeyboardDistance(word1, word2):
 	total = 0
 	for i,j in word1,word2:
@@ -38,6 +31,7 @@ def compareWordsByKeyboardDistance(word1, word2):
 def manhattanDistance(x1, y1, x2, y2):
 	return abs(x2 - x1) + abs(y2 - y1)
 
+'''
 def euclidean_distance(a,b):
     X = (keyboard_cartesian[a]['x'] - keyboard_cartesian[b]['x'])**2
     Y = (keyboard_cartesian[a]['y'] - keyboard_cartesian[b]['y'])**2
@@ -47,13 +41,10 @@ def euclidean_distance(a,b):
 for i in keyboard_cartesian.keys():
     for j in keyboard_cartesian.keys():
         distance_from_i_to_j = [(i, j, euclidean_distance(i, j))]
+'''
 
 
 
-
-
-
->>>>>>> 2b6f6d7076a874c93dfb02c92a697cb2f209fd24
 
 def removeNumbersFromWord(word):
     return ''.join([i for i in word if not i.isdigit()])
@@ -112,14 +103,11 @@ def abbrevWord(word):
 	return word[0]
 
 def compareByDoubleMetaphone(word1, word2):
-        dmeta = fuzzy.DMetaphone()
-        return dmeta(word1[0]) == dmeta(word2[0]) or dmeta(word1[1]) == dmeta(word2[1])
+        dmeta = fuzzy.DMetaphone(4)
+        print(dmeta(word1)) 
+        print(dmeta(word2))
+        return dmeta(word1)[0] == dmeta(word2)[0] or (dmeta(word1)[1] == dmeta(word2)[1] != None and
+        dmeta(word1)[1] == dmeta(word2)[1])
 
 def levenshtein(string1, string2):
     return Levenshtein.distance(string1,string2)
-
-#Compares two patients and returns confidence that they are the same person
-#@param data1 array of a row of patient data 
-#@param data2 array of a row of patient data
-def get_confidence_score(data1, data2):
-    return 0
