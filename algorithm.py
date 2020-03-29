@@ -14,82 +14,90 @@ def calculatePatientAcctNumConfidence(patientAcctNum1, patientAcctNum2):
     return confidence
 
 def calculateFullNameConfidence(first1, last1, first2, last2):
-    total = 0
-    if utility.compareFirstLastSwap(first1, last1, first2, last2):
-        total += 0.2
-    total += calculateNameConfidence(first1, first2) * 0.3
-    total += calculateNameConfidence(last1, last2) * 0.5
-    return total
+    if (first1 == '' or first2 == '') and (last1 != '' or last2 != ''):
+        return calculateNameConfidence(last1, last2)
+    elif (first1 != '' or first2 != '') and (last1 == '' or last2 == ''):
+        return calculateNameConfidence(first1, first2)
+    elif ((first1 == '' or first2 == '') and (last1 == '' or last2 == '')):
+        return None
+    else:
+        total = 0
+        if utility.compareFirstLastSwap(first1, last1, first2, last2):
+            total += 0.2
+        total += calculateNameConfidence(first1, first2) * 0.3
+        total += calculateNameConfidence(last1, last2) * 0.5
+        return total
 
 def calculateNameConfidence(name1, name2):
-    if name1 == "" or name2 == "":
-        return 0
     total = 0
 
     if utility.compareByAbbrevWord(name1, name2):
-        total += 0.9
+        total += 0.1
     
     if utility.compareWordsWithoutSpecialChars(name1, name2):
-        total += 0.9
+        return 1
+
+    if utility.compareNameByNickname(name1, name2):
+        total += 0.35
 
     if utility.compareByContains(name1, name2):
-        total += 0.6
+        total += 0.05
     
     if utility.compareByDoubleMetaphone(name1, name2):
-        total += 0.8
+        total += 0.25
 
     if utility.compareByVisuallySimilarChars(name1, name2):
-        total += 0.9
+        return 1
     
     #CHANGE
     manhattandistance = utility.compareWordsByKeyboardDistance(name1, name2)
 
     levDistance = utility.levenshtein(name1, name2)
-    levConfidence = 1/(pow(levDistance+1,0.9*levDistance))
+    levConfidence = 1/(pow(levDistance+1,0.9*levDistance)) * 0.25
     total += levConfidence
-    return min(total,1)
+    return total
 
 def calculateMiddleIConfidence(middle1, middle2):
     if middle1 == "" or middle2 == "":
-        return 0
+        return None
     total = 0
 
     if utility.compareByAbbrevWord(middle1, middle2):
-        total += 0.2
+        total += 0.1
     
     if utility.compareWordsWithoutSpecialChars(middle1, middle2):
-        total += 0.9
+        return 1
 
     if utility.compareNameByNickname(middle1, middle2):
-        total += 0.5
+        total += 0.35
     
     if utility.compareByContains(middle1, middle2):
-        total += 0.6
+        total += 0.05
     
     if utility.compareByDoubleMetaphone(middle1, middle2):
-        total += 0.8
+        total += 0.25
 
     if utility.compareByVisuallySimilarChars(middle1, middle2):
-        total += 0.9
+        return 1
     
     #change
     manhattandistance = utility.compareWordsByKeyboardDistance(middle1, middle2)
 
     levDistance = utility.levenshtein(middle1, middle2)
-    levConfidence = 1/(pow(levDistance+1,0.2*levDistance))
+    levConfidence = 1/(pow(levDistance+1,0.2*levDistance)) * .25
     total += levConfidence
-    return min(total,1)
+    return total
 
 def calculateDOBConfidence(dob1, dob2):
     if dob1 == "" or dob2 == "":
-        return 0
+        return None
     distance = utility.levenshtein(dob1, dob2)
     confidence = 1/pow(distance+1,0.5*distance)
     return confidence
 
 def calculateSexConfidence(sex1, sex2):
     if sex1 == "" or sex2 == "":
-        return 0
+        return None
     try:
         sex1 = dictionaries.sex[sex1]
     except KeyError:
@@ -104,8 +112,7 @@ def calculateSexConfidence(sex1, sex2):
 
 def calculateStreetConfidence(street1, street2):
     if street1 == "" or street2 == "":
-        return 0
-    total = 0
+        return None
     street1 = street1.split(' ')
     street2 = street2.split(' ')
 
@@ -120,29 +127,27 @@ def calculateStreetConfidence(street1, street2):
         pass
     
     if street1 == street2:
-        total += 1
+        return 1
     
     #double metaphone for each word
     for elem1, elem2 in zip(street1, street2):
         if elem1 == None or elem2 == None:
             break
         if utility.compareByDoubleMetaphone(elem1,elem2):
-            total += 1/(max(len(street1),len(street2)))
+            metaphoneConfidence = 1/(max(len(street1),len(street2)))
+    
     street1 = ' '.join(str(elem) for elem in street1)
     street2 = ' '.join(str(elem) for elem in street2)
 
     #levenshtein
     distance = utility.levenshtein(street1, street2)
-    confidence = 1/(pow(distance+1,0.2*distance))
-    total += confidence
+    levenshteinConfidence = 1/(pow(distance+1,0.2*distance))
 
-    #shortened versions
-
-    return min(total, 1)
+    return metaphoneConfidence * 0.5 + levenshteinConfidence * 0.5
 
 def calculateCityConfidence(city1, city2):
     if city1 == "" or city2 == "":
-        return 0
+        return None
     #calculate two fully spelled out cities
     #levenshtein
     else:
@@ -169,7 +174,7 @@ def calculateCityConfidence(city1, city2):
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
     if state1 == "" or state2 == "":
-        return 0
+        return None
     else:
         try: 
             state1 = dictionaries.states[state1]
@@ -185,7 +190,7 @@ def calculateStateConfidence(state1, state2):
 
 def calculateZipConfidence(zip1, zip2):
     if zip1 == "" or zip2 == "":
-        return 0
+        return None
     else:
         distance = utility.levenshtein(zip1, zip2) 
     # distance -> confidence
