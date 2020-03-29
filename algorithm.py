@@ -416,22 +416,34 @@ def getConfidenceScore(row1, row2):
     return score
 
 def groupByConfidenceScore(cursor, confidenceThreshold):
-    alreadyAddedList = [] #store patient ids in here
-    result = []
-    for row1 in data:
+    retTable ='''
+    CREATE TABLE Return LIKE Data;
+    INSERT INTO Return SELECT * FROM Data;
+    ALTER TABLE Return ADD GroupID datatype;
+    '''
+    cursor.execute(retTable)
+    alreadyAddedList = []
+    groupCount = 0
+    cursor.execute('SELECT PatientID FROM `Data` ORDER BY PatientID DESC LIMIT 1')
+    count = cursor.fetchone()[0]
+    for i in range(1,count+1):
+        cursor.execute("SELECT * from `AdaptedData` WHERE PatientID=" + str(i))
+        row1 = cursor.fetchone()
         if row1 in alreadyAddedList:
             continue
-        group = [row1]
+        cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(i))
         alreadyAddedList.append(row1)
-        for row2 in data:
+        for j in range(1,count+1):
+            cursor.execute("SELECT * from `AdaptedData` WHERE PatientID=" + str(j))
+            row2 = cursor.fetchone()
             if row2 not in alreadyAddedList:
                 if getConfidenceScore(row1, row2) >= confidenceThreshold:
-                    group.append(row2)
+                    cursor.execute('UPDATE Return SET GroupID=' + str(groupCount) + ' WHERE PatientID=' + str(j))
                     alreadyAddedList.append(row2)
                 #exit()
         print(len(group))
         # print(group)
-        result.append(group)
+        groupCount += 1
     # return an array of groups
     print(len(result))
     return result

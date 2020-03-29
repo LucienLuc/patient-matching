@@ -18,10 +18,10 @@ def compareDoubleMetaphones(name1DM, name2DM):
 
 def compareSentDoubleMetaphones(sent1DM, sent2DM):
 	#TODO: format first
-    for i,j in zip(sent1DM, sent2DM):
-        if not compareDoubleMetaphones(i, j):
-            return False
-    return True
+	for i,j in zip(sent1DM, sent2DM):
+		if not compareDoubleMetaphones(i, j):
+			return False
+	return True
 
 def getCSVContents(csvFilePath):
 	data = []
