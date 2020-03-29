@@ -20,6 +20,8 @@ def getCSVContents(csvFilePath):
 	return data
 
 def compareWordsByKeyboardDistance(word1, word2):
+    word1 = removeSpecialCharsFromWord(word1)
+    word2 = removeSpecialCharsFromWord(word2)
     total = 0
     for i,j in zip(word1,word2):
         x1 = dictionaries.keyboard_cartesian[i]['x']

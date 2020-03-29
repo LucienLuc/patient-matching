@@ -155,7 +155,7 @@ def calculateCityConfidence(city1, city2):
         dmetaScore = 0
     #double metaphone
         if utility.compareByDoubleMetaphone(city1, city2):
-        dmetaScore = 0.5
+            dmetaScore = 0.5
 
     #calculate abbreviations
         abbreviationScore = 0
