@@ -4,6 +4,8 @@ import Levenshtein #pip install python-levenshtein
 import collections
 import string
 import csv
+import homoglyphs
+import dictionaries
 
 # csv repo 1 = https://github.com/carltonnorthern/nickname-and-diminutive-names-lookup
 # csv repo 2 = https://github.com/MrCsabaToth/SOEMPI/tree/master/openempi
@@ -57,9 +59,13 @@ def compareByAbbrevWord(word1, word2):
 
 def compareByCommonMisspells(name1, name2):
         return False
-		
+
 def compareByVisuallySimilarChars(word1, word2):
-        return False
+	# rn and m. deal with it. cant go char by char
+	for i,j in word1,word2:
+		if not homoglyphs.Homoglyphs().get_combinations(i) == homoglyphs.Homoglyphs().get_combinations(j) or dictionaries.similarChars[i] in dictionaries.similarChars[j] or i==j:
+			return False
+	return True
 
 def compareByAbbrevSentence(sentence1, sentence2):
 	return abbrevSentence(sentence1) == sentence2 or sentence1 == abbrevSentence(sentence2)
