@@ -266,6 +266,7 @@ def getConfidenceScore(row1, row2):
     score = 0
     for s in confidenceScores:
         score += s
+
     print("Total confidence: " + str(score))
     return score
 
