@@ -22,6 +22,8 @@ def calculateFullNameConfidence(first1, last1, first2, last2):
     return total
 
 def calculateNameConfidence(name1, name2):
+    if name1 == "" or name2 == "":
+        return 0
     total = 0
 
     if utility.compareByAbbrevWord(name1, name2):
@@ -48,6 +50,8 @@ def calculateNameConfidence(name1, name2):
     return min(total,1)
 
 def calculateMiddleIConfidence(middle1, middle2):
+    if middle1 == "" or middle2 == "":
+        return 0
     total = 0
 
     if utility.compareByAbbrevWord(middle1, middle2):
@@ -78,11 +82,15 @@ def calculateMiddleIConfidence(middle1, middle2):
     return 1
 
 def calculateDOBConfidence(dob1, dob2):
+    if dob1 == "" or dob2 == "":
+        return 0
     distance = utility.levenshtein(dob1, dob2)
     confidence = 1/pow(distance+1,0.5*distance)
     return confidence
 
 def calculateSexConfidence(sex1, sex2):
+    if sex1 == "" or sex2 == "":
+        return 0
     try:
         sex1 = dictionaries.sex[sex1]
     except KeyError:
@@ -96,6 +104,8 @@ def calculateSexConfidence(sex1, sex2):
     return confidence
 
 def calculateStreetConfidence(street1, street2):
+    if street1 == "" or street2 == "":
+        return 0
     total = 0
     street1 = street1.split(' ')
     street2 = street2.split(' ')
@@ -135,7 +145,8 @@ def calculateStreetConfidence(street1, street2):
 #print(calculateStreetConfidence('1241 Shrug Center', '8178 Talisman Center'))
 
 def calculateCityConfidence(city1, city2):
-
+    if city1 == "" or city2 == "":
+        return 0
     #calculate two fully spelled out cities
     #levenshtein
     distance = utility.levenshtein(city1, city2)
