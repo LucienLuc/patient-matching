@@ -23,7 +23,8 @@ def streetToDoubleMetaphone(street):
     return res
 
 def compareDoubleMetaphones(name1DM, name2DM):
-	# format possibly
+	name1DM = name1DM.split(' ')
+	name2DM = name2DM.split(' ')
 	one = name1DM[0] == None or name2DM[0] == None
 	two = name1DM[0] == name2DM[0] and one
 	three = name2DM[1] != None and name1DM[0] != None and name1DM[0] == name2DM[1]
@@ -39,7 +40,8 @@ def compareDoubleMetaphones(name1DM, name2DM):
 	return False
 
 def compareSentDoubleMetaphones(sent1DM, sent2DM):
-	#TODO: format first
+	sent1DM = sent1DM.split(',')
+	sent2DM = sent2DM.split(',')
 	for i,j in zip(sent1DM, sent2DM):
 		if not compareDoubleMetaphones(i, j):
 			return False
