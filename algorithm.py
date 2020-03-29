@@ -174,7 +174,7 @@ def calculateCityConfidence(city1, city2):
 def calculateStateConfidence(state1, state2):
     #convert abbreviations to full states
     if state1 == "" or state2 == "":
-        return 0
+        return None
     else:
         try: 
             state1 = dictionaries.states[state1]
@@ -190,7 +190,7 @@ def calculateStateConfidence(state1, state2):
 
 def calculateZipConfidence(zip1, zip2):
     if zip1 == "" or zip2 == "":
-        return 0
+        return None
     else:
         distance = utility.levenshtein(zip1, zip2) 
     # distance -> confidence
